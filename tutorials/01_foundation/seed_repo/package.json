@@ -1,0 +1,10 @@
+{
+  "name": "tutorial-collaboration-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Git and GitLab training repository for generic collaboration tutorial labs.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

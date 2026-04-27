@@ -1,0 +1,10 @@
+# Docs and operating policy
+/docs/ @maintainers
+
+# Permissions and feature gates
+/src/permissions.js @owners @maintainers
+/src/feature-flags.json @owners @maintainers
+
+# Tests and CI
+/tests/ @developers @maintainers
+/.gitlab-ci.yml @maintainers

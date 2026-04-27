@@ -1,0 +1,19 @@
+stages:
+  - test
+  - build
+
+test_job:
+  stage: test
+  image: node:20
+  script:
+    - node --test
+    - node scripts/smoke-check.js
+
+build_job:
+  stage: build
+  image: node:20
+  script:
+    - node scripts/build-site.js
+  artifacts:
+    paths:
+      - dist/
