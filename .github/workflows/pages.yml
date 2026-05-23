@@ -29,6 +29,9 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+          sparse-checkout: |
+            .github
+            public
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
