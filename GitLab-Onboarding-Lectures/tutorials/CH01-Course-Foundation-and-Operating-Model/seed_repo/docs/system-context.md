@@ -6,15 +6,14 @@
 
 ## 현재 구성
 
-- `src/permissions.js`: 역할별 sample action visibility 규칙
-- `src/app.js`: 튜토리얼 요약 텍스트 생성
-- `src/app.txt`: UI 카피 초안
+- `src/permissions.py`: 역할별 sample action visibility 규칙
+- `public/index.html`: 브라우저로 바로 확인할 수 있는 간단한 화면
 - `docs/process.md`: 조별 conflict 실습에 사용할 공용 절차
-- `tests/permissions.test.js`: 최소 권한 테스트
+- `tests/test_permissions.py`: 최소 권한 테스트
 
 ## 이후 확장 예정
 
-- branch 전략 실습용 feature flag
+- branch 전략 실습용 feature flag 문서
 - MR template, CODEOWNERS
-- `.gitlab-ci.yml`, build/smoke script
-- capstone용 sample action 구현 파일
+- `.gitlab-ci.yml`, Python 기반 문서/smoke script
+- capstone용 Python sample action 구현 파일

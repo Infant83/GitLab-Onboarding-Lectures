@@ -8,14 +8,11 @@
 
 - `README.md`
 - `.gitignore`
-- `package.json`
 - `public/index.html`
-- `src/app.js`
-- `src/app.txt`
-- `src/permissions.js`
+- `src/permissions.py`
 - `docs/process.md`
 - `docs/system-context.md`
-- `tests/permissions.test.js`
+- `tests/test_permissions.py`
 
 ## 진행 방식
 
@@ -25,8 +22,7 @@
 
 ```bash
 git status
-git add README.md .gitignore package.json
-git add public src docs tests
+git add README.md .gitignore public src docs tests
 git commit -m "ch01: initialize tutorial collaboration seed"
 git push -u origin main
 ```
@@ -34,8 +30,8 @@ git push -u origin main
 ## 강의 연결 포인트
 
 - CH02에서는 `notes.txt`, `docs/tutorial-guide.md`를 추가해 기본 commit cycle을 연습한다.
-- CH03에서는 `src/permissions.js`와 tests를 바탕으로 tag, revert, bisect를 연습한다.
-- CH06에서는 `docs/process.md`, `src/app.txt`를 의도적으로 충돌시킨다.
+- CH03에서는 `src/permissions.py`와 tests를 바탕으로 tag, revert, bisect를 연습한다.
+- CH06에서는 `docs/process.md`, `public/index.html`을 의도적으로 충돌시킨다.
 - CH07에서는 이 seed repo 위에 `.gitlab-ci.yml`과 scripts를 올린다.
 
 ## 확인 질문

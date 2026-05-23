@@ -13,8 +13,8 @@ CH01에서 만든 seed repo에 가장 기본적인 실습 파일을 추가하고
 
 - `README.md`
 - `docs/process.md`
-- `src/app.txt`
-- `src/permissions.js`
+- `public/index.html`
+- `src/permissions.py`
 
 ## 권장 실습 순서
 

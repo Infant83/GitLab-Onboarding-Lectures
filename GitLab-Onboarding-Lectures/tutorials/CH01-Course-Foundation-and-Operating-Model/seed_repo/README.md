@@ -7,7 +7,7 @@
 - 간단한 역할 기반 sample action visibility 규칙
 - 공용 절차 문서
 - 최소 테스트
-- 이후 챕터에서 확장될 build / CI / capstone 기반
+- 이후 챕터에서 확장될 HTML / Python / CI / capstone 기반
 
 ## 기본 역할 규칙
 
@@ -21,5 +21,5 @@
 ```bash
 git status
 git branch -vv
-node --test
+python -m unittest discover -s tests
 ```

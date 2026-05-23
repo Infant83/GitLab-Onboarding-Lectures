@@ -2,8 +2,9 @@
 /docs/ @maintainers
 
 # Permissions and feature gates
-/src/permissions.js @owners @maintainers
-/src/feature-flags.json @owners @maintainers
+/src/permissions.py @owners @maintainers
+/docs/feature-flags.md @owners @maintainers
+/public/ @maintainers
 
 # Tests and CI
 /tests/ @developers @maintainers

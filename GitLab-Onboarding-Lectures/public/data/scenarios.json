@@ -1,0 +1,90 @@
+[
+  {
+    "id": "protected-main-push",
+    "title": "Developer가 main에 직접 push하려 합니다",
+    "context": "main은 protected branch입니다. 지금 역할은 기능을 수정한 Developer이고, 변경은 아직 feature branch에 있습니다.",
+    "choices": [
+      {
+        "label": "feature branch를 만들고 그 branch로 push한 뒤 MR을 엽니다.",
+        "tone": "correct",
+        "feedback": "맞습니다. protected branch는 우회하지 않습니다. branch를 나누고 MR에서 리뷰와 pipeline을 거칩니다."
+      },
+      {
+        "label": "Maintainer에게 main push 권한을 잠시 열어 달라고 합니다.",
+        "tone": "risky",
+        "feedback": "위험합니다. 권한을 열기 전에 MR 흐름으로 처리할 수 없는 이유부터 남깁니다."
+      },
+      {
+        "label": "로컬에서 reset한 뒤 다시 push를 시도합니다.",
+        "tone": "wrong",
+        "feedback": "문제는 로컬 이력이 아니라 branch 보호 정책입니다. reset으로 풀 수 있는 상황이 아닙니다."
+      }
+    ]
+  },
+  {
+    "id": "reviewer-approval",
+    "title": "Reviewer가 MR을 승인할지 판단합니다",
+    "context": "diff는 작지만 pipeline이 아직 끝나지 않았고 rollback 기준도 MR 설명에 없습니다.",
+    "choices": [
+      {
+        "label": "변경 의도, 테스트 결과, rollback 기준을 MR에 남기도록 요청합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. Reviewer의 일은 막는 것이 아니라 merge 전에 판단 근거를 선명하게 만드는 일입니다."
+      },
+      {
+        "label": "코드가 짧으니 바로 approve합니다.",
+        "tone": "risky",
+        "feedback": "작은 변경도 운영 영향이 있으면 기준이 필요합니다. pipeline과 rollback 기준을 먼저 봅니다."
+      },
+      {
+        "label": "Maintainer에게 리뷰를 넘깁니다.",
+        "tone": "wrong",
+        "feedback": "권한 문제가 아니라 리뷰 책임의 문제입니다. 본인이 볼 수 있는 범위의 근거를 남깁니다."
+      }
+    ]
+  },
+  {
+    "id": "failed-pipeline",
+    "title": "MR은 승인됐지만 pipeline이 실패했습니다",
+    "context": "approval은 충분합니다. 다만 test job이 실패했고, project는 pipeline success를 merge 조건으로 둡니다.",
+    "choices": [
+      {
+        "label": "Developer가 실패 로그를 읽고 수정 commit을 다시 push합니다.",
+        "tone": "correct",
+        "feedback": "맞습니다. 권한이 있는 사람이 merge 버튼을 누르는 것보다 실패 원인을 고치는 일이 먼저입니다."
+      },
+      {
+        "label": "Maintainer가 merge 조건을 잠시 끕니다.",
+        "tone": "risky",
+        "feedback": "긴급 hotfix가 아니라면 기준을 끄지 않습니다. 기준을 바꾸면 그 이유와 복구 시점을 남겨야 합니다."
+      },
+      {
+        "label": "Reviewer가 approve를 취소합니다.",
+        "tone": "wrong",
+        "feedback": "필요할 수는 있지만 첫 행동은 실패 원인 확인입니다. approval과 pipeline 실패는 따로 봐야 합니다."
+      }
+    ]
+  },
+  {
+    "id": "owner-visibility",
+    "title": "Owner가 project visibility 변경 요청을 받았습니다",
+    "context": "외부 협력자가 코드를 보고 싶다고 합니다. 내부 자료와 실습용 예제가 같은 project에 섞여 있습니다.",
+    "choices": [
+      {
+        "label": "공개 범위를 바꾸기 전에 저장소 내용, 이슈, artifact, wiki를 점검합니다.",
+        "tone": "correct",
+        "feedback": "맞습니다. visibility는 코드만의 문제가 아닙니다. project 안의 기록과 산출물을 함께 봐야 합니다."
+      },
+      {
+        "label": "협업 속도를 위해 곧바로 public으로 바꿉니다.",
+        "tone": "wrong",
+        "feedback": "위험합니다. Owner 권한은 빠르게 바꾸는 권한이 아니라 영향 범위를 끝까지 확인하는 책임입니다."
+      },
+      {
+        "label": "협력자에게 필요한 최소 권한과 별도 저장소가 가능한지 먼저 확인합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. 공개 전환보다 최소 권한, 별도 project, fork 가능 여부를 먼저 따져봅니다."
+      }
+    ]
+  }
+]

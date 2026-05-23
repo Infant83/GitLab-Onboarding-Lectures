@@ -14,8 +14,8 @@
 
 - `docs/branch-planning.md`
 - `docs/tutorial-guide.md`
-- `src/feature-flags.json`
-- `tests/role-policy.test.js`
+- `docs/feature-flags.md`
+- `tests/test_role_policy.py`
 
 ## 권장 실습 시나리오
 

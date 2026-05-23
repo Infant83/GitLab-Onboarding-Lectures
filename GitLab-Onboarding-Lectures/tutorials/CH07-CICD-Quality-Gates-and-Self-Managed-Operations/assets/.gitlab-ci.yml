@@ -1,19 +1,16 @@
 stages:
   - test
-  - build
+  - docs
 
 test_job:
   stage: test
-  image: node:20
+  image: python:3.12
   script:
-    - node --test
-    - node scripts/smoke-check.js
+    - python -m unittest discover -s tests
 
-build_job:
-  stage: build
-  image: node:20
+docs_job:
+  stage: docs
+  image: python:3.12
   script:
-    - node scripts/build-site.js
-  artifacts:
-    paths:
-      - dist/
+    - python scripts/check_docs.py
+    - python scripts/smoke_check.py

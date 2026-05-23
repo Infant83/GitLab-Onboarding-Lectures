@@ -7,15 +7,15 @@
 ## 이번 장에서 새로 추가하는 파일
 
 - `issues/ISSUE-101-sample-action.md`
-- `src/sample-action.js`
-- `tests/sample-action.test.js`
+- `src/sample_action.py`
+- `tests/test_sample_action.py`
 - `docs/release-decision-log.md`
 
 ## 이전 챕터에서 이어받는 파일
 
-- `src/app.js`
-- `src/permissions.js`
-- `src/feature-flags.json`
+- `public/index.html`
+- `src/permissions.py`
+- `docs/feature-flags.md`
 - `.gitlab/merge_request_templates/standard.md`
 - `.gitlab-ci.yml`
 - `docs/review-checklist.md`
@@ -23,8 +23,8 @@
 ## 권장 실습 시나리오
 
 1. `ISSUE-101-sample-action.md`를 기준으로 branch를 만든다.
-2. `src/sample-action.js`와 `tests/sample-action.test.js`를 추가한다.
-3. 기존 `src/app.js`와 `src/feature-flags.json`을 수정해 기능을 연결한다.
+2. `src/sample_action.py`와 `tests/test_sample_action.py`를 추가한다.
+3. 기존 `public/index.html`와 `docs/feature-flags.md`를 수정해 기능 설명을 연결한다.
 4. MR template에 rollback 기준과 role visibility를 적는다.
 5. pipeline 통과 후 merge하고, 의도적인 policy bug를 넣어 revert 또는 hotfix 판단을 토론한다.
 6. OpenProject를 쓰는 팀이라면 branch 이름과 MR description에 work package reference를 어떻게 넣을지 추가로 설계한다.

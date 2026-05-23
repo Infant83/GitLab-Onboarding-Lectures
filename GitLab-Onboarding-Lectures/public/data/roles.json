@@ -1,0 +1,38 @@
+[
+  {
+    "id": "guest",
+    "label": "Guest",
+    "summary": "코드 변경보다 이슈, 토론, 제한된 열람에 가까운 역할입니다. 필요한 최소 권한인지 먼저 확인합니다.",
+    "habits": ["이슈 확인", "질문 남기기", "권한 요청 근거 정리"]
+  },
+  {
+    "id": "reporter",
+    "label": "Reporter",
+    "summary": "저장소와 pipeline 결과를 읽고 상황을 설명할 수 있지만, 일반적으로 코드를 push하지 않습니다.",
+    "habits": ["로그 읽기", "재현 조건 정리", "MR 상태 공유"]
+  },
+  {
+    "id": "developer",
+    "label": "Developer",
+    "summary": "feature branch에서 작업하고 MR을 만듭니다. protected branch가 막히면 우회하지 않고 MR 흐름으로 갑니다.",
+    "habits": ["branch 생성", "MR 작성", "리뷰 반영", "pipeline 확인"]
+  },
+  {
+    "id": "reviewer",
+    "label": "Reviewer",
+    "summary": "접근 권한 이름이 아니라 MR 안에서 맡는 책임입니다. diff를 읽고, 위험을 짚고, merge 전 조건을 확인합니다.",
+    "habits": ["diff 읽기", "근거 있는 코멘트", "테스트 확인", "승인 기준 점검"]
+  },
+  {
+    "id": "maintainer",
+    "label": "Maintainer",
+    "summary": "project 운영 흐름을 관리합니다. protected branch, MR, approval, CI/CD setting을 정책에 맞게 다룹니다.",
+    "habits": ["merge 판단", "보호 브랜치 관리", "approval rule 확인", "runner 상태 점검"]
+  },
+  {
+    "id": "owner",
+    "label": "Owner",
+    "summary": "project나 group의 최종 통제권을 가집니다. visibility, 멤버 권한, 삭제 같은 큰 변경은 신중하게 다룹니다.",
+    "habits": ["권한 설계", "visibility 판단", "위험 변경 승인", "운영 책임 정리"]
+  }
+]
