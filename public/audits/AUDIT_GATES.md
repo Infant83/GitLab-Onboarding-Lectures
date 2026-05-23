@@ -1,6 +1,6 @@
 # GitLab Onboarding Pages Audit Gates
 
-이 문서는 `GitLab-Onboarding-Lectures/public`을 배포하기 전 확인할 기준이다.
+이 문서는 repo root의 `public`을 배포하기 전 확인할 기준이다.
 
 ## 1. Content Audit
 

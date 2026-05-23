@@ -5,7 +5,7 @@
 ## 로컬 실행
 
 ```powershell
-cd GitLab-Onboarding-Lectures/public
+cd public
 python -m http.server 4173
 ```
 

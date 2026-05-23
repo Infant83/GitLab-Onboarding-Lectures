@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "GitLab-Onboarding-Lectures/public/**"
+      - "public/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -34,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: GitLab-Onboarding-Lectures/public
+          path: public
 
       - name: Deploy to GitHub Pages
         id: deployment

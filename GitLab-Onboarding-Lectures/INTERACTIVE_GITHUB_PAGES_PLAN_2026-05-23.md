@@ -145,29 +145,30 @@ Download / Instructor Notes
 
 별도 GitHub 저장소는 만들지 않는다.
 
-현재 로컬 git root는 `C:\Users\angpa\myProjects\Daily_Work\GitLab-Manual`이고, remote는 이미 `https://github.com/Infant83/GitLab-Onboarding-Lectures.git`로 연결되어 있다. 따라서 `GitLab-Onboarding-Lectures` 폴더 아래에 Pages용 정적 사이트를 만들고, 현재 repo에서 그대로 push하면 된다.
+현재 로컬 git root는 `C:\Users\angpa\myProjects\Daily_Work\GitLab-Manual`이고, remote는 이미 `https://github.com/Infant83/GitLab-Onboarding-Lectures.git`로 연결되어 있다. 따라서 Pages용 정적 사이트는 repo root의 `public`에 두고, 현재 repo에서 그대로 push하면 된다.
 
 권장 구조:
 
 ```text
+public/
+├─ index.html
+├─ assets/
+│  ├─ styles.css
+│  └─ app.js
+├─ data/
+│  ├─ chapters.json
+│  ├─ roles.json
+│  └─ scenarios.json
+└─ audits/
+   └─ AUDIT_GATES.md
+
 GitLab-Onboarding-Lectures/
-├─ public/
-│  ├─ index.html
-│  ├─ assets/
-│  │  ├─ styles.css
-│  │  └─ app.js
-│  ├─ data/
-│  │  ├─ chapters.json
-│  │  ├─ roles.json
-│  │  └─ scenarios.json
-│  └─ audits/
-│     └─ AUDIT_GATES.md
 ├─ CH01-...
 ├─ tutorials/
 └─ ...
 ```
 
-GitHub Pages는 기본 UI에서 branch root 또는 `/docs`만 직접 지정할 수 있으므로, `GitLab-Onboarding-Lectures/public`을 쓰려면 GitHub Actions 배포가 가장 깔끔하다.
+GitHub Pages는 GitHub Actions 배포를 사용한다. repo root의 `public`만 artifact로 올리면 강의 원본과 배포 산출물을 분리해서 관리할 수 있다.
 
 repo root에 다음 workflow를 둔다.
 
@@ -175,7 +176,7 @@ repo root에 다음 workflow를 둔다.
 .github/workflows/pages.yml
 ```
 
-이 workflow가 `GitLab-Onboarding-Lectures/public` 폴더만 Pages artifact로 업로드한다.
+이 workflow가 repo root의 `public` 폴더만 Pages artifact로 업로드한다.
 
 ## 5. 기술 선택
 
@@ -201,7 +202,7 @@ MVP 이후 Vite + React + TypeScript로 옮긴다.
 ## 6. Pages 구조 초안
 
 ```text
-GitLab-Onboarding-Lectures/public/
+public/
 ├─ index.html
 ├─ assets/
 │  ├─ styles.css
@@ -656,7 +657,7 @@ CI 로그 조각을 보여주고 누가 무엇을 해야 하는지 고르게 한
 
 현재 repo 기준:
 
-1. `GitLab-Onboarding-Lectures/public`에 정적 사이트를 둔다.
+1. repo root의 `public`에 정적 사이트를 둔다.
 2. `.github/workflows/pages.yml`에서 해당 폴더를 artifact로 업로드한다.
 3. GitHub repo Settings -> Pages -> Source를 `GitHub Actions`로 둔다.
 4. `main`에 push하면 Pages가 배포된다.
