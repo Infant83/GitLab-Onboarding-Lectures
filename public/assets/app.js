@@ -97,22 +97,164 @@ const actionRules = [
   }
 ];
 
+const actionSupport = {
+  view_repo: {
+    where: "Project > Repository, Project > Manage > Members",
+    owner: "Reporter 또는 Developer",
+    condition: "project visibility와 membership에 따라 Guest 열람 범위가 달라집니다."
+  },
+  push_feature: {
+    where: "Repository > Branches, 터미널 git branch -vv",
+    owner: "Developer",
+    condition: "non-protected branch인지, upstream이 올바른지 확인합니다."
+  },
+  push_protected_main: {
+    where: "Settings > Repository > Branch rules",
+    owner: "Maintainer",
+    condition: "실습 정책은 Allowed to merge = Maintainers, Allowed to push and merge = No one입니다."
+  },
+  create_mr: {
+    where: "Code > Merge requests > New merge request",
+    owner: "Developer",
+    condition: "source branch와 target branch, MR description, issue 링크를 확인합니다."
+  },
+  approve_mr: {
+    where: "MR Overview > Reviewers / Approvals widget",
+    owner: "Reviewer 또는 eligible approver",
+    condition: "Reviewer는 책임이고 approve 가능 여부는 계정 권한과 approval rule이 정합니다."
+  },
+  merge_mr: {
+    where: "MR widget, Settings > Merge requests, Branch rules",
+    owner: "Maintainer",
+    condition: "approval, unresolved thread, pipeline, protected branch 조건을 분리해서 봅니다."
+  },
+  change_settings: {
+    where: "Settings > Repository, Settings > Merge requests",
+    owner: "Maintainer 또는 Owner",
+    condition: "변경 이유와 되돌릴 기준이 없으면 설정을 열지 않습니다."
+  },
+  delete_project: {
+    where: "Settings > General > Advanced",
+    owner: "Owner",
+    condition: "archive, backup, transfer, dependency 확인 뒤 마지막 선택으로 봅니다."
+  }
+};
+
 const workflow = [
   ["Issue", "Reporter와 Developer가 요구와 재현 조건을 맞춥니다."],
   ["Branch", "Developer가 작은 feature branch를 만듭니다."],
   ["Commit", "변경 이유가 보이는 commit 단위로 쪼갭니다."],
   ["MR", "Developer가 테스트와 rollback 기준을 적습니다."],
   ["Review", "Reviewer가 diff와 운영 위험을 봅니다."],
-  ["Approval", "승인자는 기준 충족 여부를 확인합니다."],
+  ["Approval", "eligible approver가 기준 충족 여부를 확인합니다."],
   ["Pipeline", "실패하면 merge보다 원인 확인이 먼저입니다."],
   ["Merge", "Maintainer가 조건을 확인하고 merge합니다."]
+];
+
+const teamRelay = [
+  {
+    id: "issue-intake",
+    label: "1. Issue 접수",
+    lead: "Reporter",
+    artifact: "ISSUE-101: 요구, 재현 조건, 영향 범위",
+    question: "이 변경이 왜 필요한지 Developer가 바로 이해할 수 있는가?",
+    handoff: "Reporter -> Developer: 재현 명령, 기대 결과, 우선순위를 함께 넘깁니다.",
+    byRole: {
+      guest: "문제를 발견했다면 댓글이나 이슈로 증상을 남깁니다. 코드 변경을 맡지는 않습니다.",
+      reporter: "증상, 재현 단계, 기대 결과를 issue 본문에 적고 담당 Developer를 지정합니다.",
+      developer: "issue를 읽고 구현 범위를 파일, 테스트, 문서로 나눕니다.",
+      reviewer: "요구가 모호하면 리뷰 전에 질문을 남길 준비를 합니다.",
+      maintainer: "이슈가 이번 release에 들어갈 수 있는 크기인지 봅니다.",
+      owner: "외부 공개나 권한 변경이 필요한 요구인지 먼저 분리합니다."
+    }
+  },
+  {
+    id: "branch-work",
+    label: "2. Branch 작업",
+    lead: "Developer",
+    artifact: "feature/issue-101-sample-action branch, 작은 commit",
+    question: "main을 건드리지 않고 리뷰 가능한 크기로 나뉘었는가?",
+    handoff: "Developer -> Reviewer: 변경 이유, 테스트 결과, 남은 의문을 MR 설명에 남깁니다.",
+    byRole: {
+      guest: "작업 branch에 push하지 않습니다. 필요한 변경은 이슈 댓글로 보탭니다.",
+      reporter: "추가 재현 조건이 생기면 issue에 보강합니다.",
+      developer: "feature branch에서 수정하고 push 전 diff와 log를 확인합니다.",
+      reviewer: "MR이 열리면 먼저 변경 범위와 테스트 근거를 확인합니다.",
+      maintainer: "branch가 protected main으로 직접 들어가지 않는지 봅니다.",
+      owner: "권한을 넓히기보다 역할 분리가 유지되는지 확인합니다."
+    }
+  },
+  {
+    id: "review",
+    label: "3. Review",
+    lead: "Reviewer",
+    artifact: "MR discussion, requested changes, approval",
+    question: "코멘트가 취향이 아니라 위험과 확인 기준을 설명하는가?",
+    handoff: "Reviewer -> Developer: 수정할 줄, 이유, 확인할 테스트를 함께 전달합니다.",
+    byRole: {
+      guest: "승인은 하지 않지만 사용 관점의 질문은 comment로 남길 수 있습니다.",
+      reporter: "재현 조건이 맞게 구현됐는지 MR 설명과 issue를 대조합니다.",
+      developer: "리뷰 코멘트를 반영한 commit을 같은 branch에 다시 push합니다.",
+      reviewer: "diff, 테스트, rollback 기준을 보고 approve 또는 request changes를 선택합니다.",
+      maintainer: "리뷰가 끝났는지, unresolved discussion이 남았는지 확인합니다.",
+      owner: "권한 정책이나 공개 범위와 충돌하는 변경인지 확인합니다."
+    }
+  },
+  {
+    id: "pipeline",
+    label: "4. Pipeline",
+    lead: "Developer + Maintainer",
+    artifact: "job log, 실패 원인, 수정 commit",
+    question: "실패가 코드 문제인지 runner/variable 문제인지 분리됐는가?",
+    handoff: "Developer -> Maintainer: 코드 수정으로 풀 수 없는 운영 신호를 근거와 함께 넘깁니다.",
+    byRole: {
+      guest: "pipeline을 고치지는 않지만 실패가 사용자 영향으로 이어지는지 질문할 수 있습니다.",
+      reporter: "실패 로그를 읽고 재현 조건과 연결되는지 확인합니다.",
+      developer: "첫 유의미 에러를 찾아 수정 commit을 push합니다.",
+      reviewer: "pipeline 실패가 승인 판단을 막는 이유를 MR에 남깁니다.",
+      maintainer: "runner, protected variable, branch rule 문제를 확인합니다.",
+      owner: "운영 정책을 예외로 풀어야 하는지, 다음 복구 시점이 있는지 봅니다."
+    }
+  },
+  {
+    id: "merge-release",
+    label: "5. Merge와 배포",
+    lead: "Maintainer",
+    artifact: "merged MR, release note, 배포 확인",
+    question: "approval, discussion, pipeline, protected branch 조건이 모두 닫혔는가?",
+    handoff: "Maintainer -> Team: merge 결과와 배포 확인 지점을 공유합니다.",
+    byRole: {
+      guest: "결과를 확인하고 문제가 있으면 이슈에 증상을 남깁니다.",
+      reporter: "요구가 해결됐는지 issue를 기준으로 확인합니다.",
+      developer: "merge 뒤 local main을 갱신하고 feature branch 정리를 준비합니다.",
+      reviewer: "승인한 변경이 최종 diff에 남아 있는지 확인합니다.",
+      maintainer: "merge 조건을 확인하고 protected branch 정책 안에서 merge합니다.",
+      owner: "예외 merge가 있었다면 사유와 복구 기준이 기록됐는지 확인합니다."
+    }
+  },
+  {
+    id: "rollback",
+    label: "6. 문제 발견과 rollback",
+    lead: "Maintainer + Owner",
+    artifact: "rollback decision log, revert MR 또는 hotfix branch",
+    question: "되돌릴지, hotfix할지 판단 기준이 남아 있는가?",
+    handoff: "Maintainer -> Owner: 영향 범위, 복구 선택지, 재발 방지 항목을 넘깁니다.",
+    byRole: {
+      guest: "문제를 발견하면 화면, 시간, 재현 조건을 남깁니다.",
+      reporter: "영향 범위와 재현 조건을 다시 정리합니다.",
+      developer: "revert 또는 hotfix branch를 만들고 테스트를 다시 돌립니다.",
+      reviewer: "복구 MR이 원래 문제를 되돌리는지, 새 위험을 만들지 않는지 봅니다.",
+      maintainer: "revert, hotfix, feature flag off 중 하나를 선택하고 실행합니다.",
+      owner: "정책 예외, 공개 사고, 권한 변경이 필요한지 최종 판단합니다."
+    }
+  }
 ];
 
 const learnerChecklist = [
   {
     id: "explain_roles",
     title: "역할 차이를 한 문장으로 설명한다",
-    detail: "Guest, Reporter, Developer, Reviewer, Maintainer, Owner의 경계를 말할 수 있다."
+    detail: "Reviewer는 접근 role이 아니라 MR 책임이며, Owner는 일상 승인자가 아니라 정책 책임자라는 점까지 말할 수 있다."
   },
   {
     id: "branch_before_push",
@@ -162,8 +304,10 @@ function makeChapterLink(id) {
 function renderRoleSwitcher(roles) {
   const switcher = $("#roleSwitcher");
   const roleSelect = $("#roleSelect");
+  const heroRoleSelect = $("#heroRoleSelect");
   switcher.innerHTML = "";
   roleSelect.innerHTML = "";
+  if (heroRoleSelect) heroRoleSelect.innerHTML = "";
 
   roles.forEach((role) => {
     const button = document.createElement("button");
@@ -171,6 +315,7 @@ function renderRoleSwitcher(roles) {
     button.type = "button";
     button.textContent = role.label;
     button.dataset.role = role.id;
+    button.setAttribute("aria-pressed", "false");
     button.addEventListener("click", () => setRole(role.id, roles));
     switcher.appendChild(button);
 
@@ -178,9 +323,15 @@ function renderRoleSwitcher(roles) {
     option.value = role.id;
     option.textContent = role.label;
     roleSelect.appendChild(option);
+
+    if (heroRoleSelect) {
+      const heroOption = option.cloneNode(true);
+      heroRoleSelect.appendChild(heroOption);
+    }
   });
 
   roleSelect.addEventListener("change", (event) => setRole(event.target.value, roles));
+  if (heroRoleSelect) heroRoleSelect.addEventListener("change", (event) => setRole(event.target.value, roles));
 }
 
 function renderActions() {
@@ -201,12 +352,17 @@ function renderActions() {
 function setRole(roleId, roles) {
   state.role = roleId;
   $("#roleSelect").value = roleId;
+  const heroRoleSelect = $("#heroRoleSelect");
+  if (heroRoleSelect) heroRoleSelect.value = roleId;
   renderCurrentRole(roles);
   renderPermission();
   renderWorkflow();
+  renderTeamRelay();
 
   document.querySelectorAll(".role-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.role === roleId);
+    const active = button.dataset.role === roleId;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
 }
 
@@ -233,6 +389,7 @@ function renderPermission() {
   $("#actionSelect").value = state.action;
 
   const [status, message, next] = action.results[state.role];
+  const support = actionSupport[action.id];
   const statusLabel = {
     allow: "허용",
     conditional: "조건부",
@@ -243,6 +400,13 @@ function renderPermission() {
     <span class="result-status status-${status}">${statusLabel}</span>
     <p class="result-copy">${message}</p>
     <p class="result-next">다음 행동: ${next}</p>
+    ${support ? `
+      <dl class="result-support">
+        <div><dt>확인 위치</dt><dd>${support.where}</dd></div>
+        <div><dt>다음 담당</dt><dd>${support.owner}</dd></div>
+        <div><dt>조건</dt><dd>${support.condition}</dd></div>
+      </dl>
+    ` : ""}
   `;
 }
 
@@ -263,7 +427,7 @@ function renderChapters(chapters) {
         <p><strong>완료:</strong> <span>${chapter.exitCheck || chapter.interaction}</span></p>
       </div>
       <div class="chapter-links">
-        <a class="mini-link" href="${makeChapterLink(chapter.id)}">챕터 열기</a>
+        <a class="mini-link" href="${makeChapterLink(chapter.id)}" aria-label="${chapter.number} ${chapter.title} 챕터 열기">${chapter.number} 챕터 열기</a>
       </div>
     `;
     grid.appendChild(article);
@@ -320,6 +484,37 @@ function renderScenarios(scenarios) {
   });
 
   renderScenarioDetail(scenarios);
+}
+
+function renderTeamRelay() {
+  const select = $("#relayStepSelect");
+  const detail = $("#relayDetail");
+  if (!select || !detail) return;
+
+  if (!select.dataset.ready) {
+    teamRelay.forEach((step) => {
+      const option = document.createElement("option");
+      option.value = step.id;
+      option.textContent = step.label;
+      select.appendChild(option);
+    });
+    select.dataset.ready = "true";
+    select.addEventListener("change", renderTeamRelay);
+  }
+
+  const selected = teamRelay.find((step) => step.id === select.value) || teamRelay[0];
+  select.value = selected.id;
+  const currentRole = $("#currentRoleName")?.textContent || "현재 역할";
+  const roleText = selected.byRole[state.role] || "이 단계에서는 보조 확인을 맡습니다.";
+
+  detail.innerHTML = `
+    <p class="relay-lead">주 담당: ${selected.lead}</p>
+    <strong>${selected.label.replace(/^\d+\.\s*/, "")}</strong>
+    <p>산출물: ${selected.artifact}</p>
+    <p>판단 질문: ${selected.question}</p>
+    <p class="relay-role-note">${currentRole}: ${roleText}</p>
+    <p class="relay-handoff">${selected.handoff}</p>
+  `;
 }
 
 function renderScenarioDetail(scenarios) {
@@ -380,6 +575,7 @@ async function init() {
     renderChapters(chapters);
     renderScenarios(scenarios);
     renderWorkflow();
+    renderTeamRelay();
     renderLearnerChecklist();
     setRole(state.role, roles);
   } catch (error) {

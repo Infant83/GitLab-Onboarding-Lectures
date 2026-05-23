@@ -25,8 +25,8 @@
       <nav class="nav-links" aria-label="주요 메뉴">
         <a href="#route">목차</a>
         <a href="#role-lab">역할별 수행시나리오</a>
-        <a href="#chapters">챕터 소개</a>
-        <a href="#takehome">Take Home Messages</a>
+        <a href="#chapters">실습 챕터</a>
+        <a href="#takehome">핵심 정리</a>
       </nav>
     </div>
   </header>
@@ -37,26 +37,30 @@
         <p class="section-label">실습형 GitLab 강의</p>
         <h1>역할을 바꿔가며 배우는 GitLab 협업 실습</h1>
         <p class="lede">
-          이 강의는 명령어를 외우는 수업이 아닙니다. 같은 MR을 두고
-          Developer는 고치고, Reviewer는 근거를 남기고, Maintainer는 merge 조건을 확인합니다.
+          같은 이슈를 팀원이 차례로 넘겨받습니다. Developer는 branch에서 고치고,
+          Reviewer는 판단 근거를 남기고, Maintainer는 merge 조건을 확인합니다.
         </p>
         <p class="supporting">
-          먼저 역할을 고릅니다. 그 다음 권한이 막히는 장면을 실험하고,
-          8개 챕터를 따라 issue부터 rollback까지 한 번에 이어봅니다.
+          먼저 역할을 고릅니다. 권한이 막히는 순간을 실험한 뒤,
+          8개 챕터에서 issue, branch, MR, review, pipeline, rollback을 한 흐름으로 연결합니다.
         </p>
         <div class="hero-actions">
-          <a class="button" href="#role-lab">권한 실험 시작</a>
+          <a class="button" href="#role-lab">팀 시나리오 시작</a>
           <a class="button button-ghost" href="#route">목차 보기</a>
         </div>
       </div>
 
       <aside class="role-panel" aria-label="현재 역할">
         <div class="panel-heading">
-          <p class="section-label">Current role</p>
+          <p class="section-label">현재 역할</p>
           <h2 id="currentRoleName">Developer</h2>
         </div>
         <p id="currentRoleSummary" class="role-summary"></p>
         <div id="currentRoleTags" class="tag-row" aria-label="역할 핵심 행동"></div>
+        <label class="mobile-role-jump">
+          <span>역할 바로 바꾸기</span>
+          <select id="heroRoleSelect" aria-label="현재 역할 바로 선택"></select>
+        </label>
       </aside>
     </section>
 
@@ -69,8 +73,8 @@
         <p class="section-label">목차</p>
         <h2>강의 순서</h2>
         <p>
-          처음에는 내 역할을 정합니다. 그 다음 권한이 막히는 장면을 보고,
-          각 챕터에서 로컬 작업과 GitLab 화면을 연결합니다.
+          처음에는 내 역할을 정합니다. 그 다음 같은 MR을 역할별로 넘겨받으며,
+          각 챕터에서 로컬 명령과 GitLab 화면을 함께 확인합니다.
         </p>
       </div>
       <div class="route-grid">
@@ -100,10 +104,10 @@
     <section class="page-shell section-grid" id="role-lab">
       <div class="section-copy">
         <p class="section-label">역할별 수행시나리오</p>
-        <h2>역할별 가상 시나리오</h2>
+        <h2>역할별 협업 시나리오</h2>
         <p>
-          Developer에게는 작업 시작점이고, Reviewer에게는 검토 기준이며,
-          Maintainer에게는 merge 조건입니다. 결과보다 다음 행동을 먼저 봅니다.
+          한 사람이 모든 일을 끝내지 않습니다. 같은 변경을 Reporter, Developer,
+          Reviewer, Maintainer, Owner가 차례로 넘겨받으며 다음 행동을 고릅니다.
         </p>
       </div>
 
@@ -124,7 +128,7 @@
         <div class="scenario-box">
           <div class="scenario-head">
             <div>
-              <p class="section-label">Scenario</p>
+              <p class="section-label">판단 장면</p>
               <h3 id="scenarioTitle">시나리오</h3>
             </div>
             <select id="scenarioSelect" aria-label="시나리오 선택"></select>
@@ -141,16 +145,30 @@
           </div>
           <ol class="workflow-board" id="workflowBoard"></ol>
         </div>
+
+        <div class="team-relay">
+          <div class="workflow-inline-head">
+            <p class="section-label">팀 릴레이</p>
+            <h3>같은 MR을 다음 사람에게 넘기는 연습</h3>
+          </div>
+          <div class="relay-grid">
+            <label>
+              <span>진행 상태</span>
+              <select id="relayStepSelect"></select>
+            </label>
+            <div class="relay-detail" id="relayDetail" aria-live="polite"></div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="page-shell section" id="chapters">
       <div class="section-heading">
-        <p class="section-label">챕터 소개</p>
-        <h2>Hands-on Tutorials</h2>
+        <p class="section-label">실습 챕터</p>
+        <h2>실습 챕터</h2>
         <p>
-          카드에서 바로 노트나 PDF로 빠지지 않습니다. 먼저 챕터 상세 페이지에서
-          목표, 역할별 행동, 실습 순서, 완료 기준을 확인합니다.
+          각 챕터는 실습 장면으로 시작합니다. 상세 페이지에서 파일, 명령어,
+          GitLab 화면, 역할별 인수인계 문구를 함께 확인합니다.
         </p>
       </div>
       <div class="chapter-grid" id="chapterGrid"></div>
@@ -158,8 +176,8 @@
 
     <section class="page-shell section-grid checklist-section" id="takehome">
       <div class="section-copy">
-        <p class="section-label">Take Home Messages</p>
-        <h2>Take Home Messages</h2>
+        <p class="section-label">핵심 정리</p>
+        <h2>핵심 정리</h2>
         <p>
           아래 문장을 스스로 체크합니다. 체크 상태는 이 브라우저에만 저장됩니다.
         </p>

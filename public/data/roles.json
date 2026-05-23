@@ -20,8 +20,8 @@
   {
     "id": "reviewer",
     "label": "Reviewer",
-    "summary": "접근 권한 이름이 아니라 MR 안에서 맡는 책임입니다. diff를 읽고, 위험을 짚고, merge 전 조건을 확인합니다.",
-    "habits": ["diff 읽기", "근거 있는 코멘트", "테스트 확인", "승인 기준 점검"]
+    "summary": "접근 권한 이름이 아니라 MR 안에서 맡는 책임입니다. diff를 읽고, 위험을 짚고, approve 또는 request changes의 근거를 남깁니다.",
+    "habits": ["diff 읽기", "근거 있는 코멘트", "테스트 확인", "재검토 요청"]
   },
   {
     "id": "maintainer",
@@ -32,7 +32,7 @@
   {
     "id": "owner",
     "label": "Owner",
-    "summary": "project나 group의 최종 통제권을 가집니다. visibility, 멤버 권한, 삭제 같은 큰 변경은 신중하게 다룹니다.",
-    "habits": ["권한 설계", "visibility 판단", "위험 변경 승인", "운영 책임 정리"]
+    "summary": "project나 group의 최종 통제권을 가집니다. 평소 MR 승인보다 visibility, 멤버 권한, 예외 정책 같은 큰 변경을 책임집니다.",
+    "habits": ["권한 설계", "visibility 판단", "예외 승인", "운영 책임 정리"]
   }
 ]

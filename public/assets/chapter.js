@@ -1,6 +1,7 @@
 const officialSources = {
   roles: ["Roles and permissions", "https://docs.gitlab.com/user/permissions/"],
   mrAuth: ["Merge request workflows", "https://docs.gitlab.com/user/project/merge_requests/authorization_for_merge_requests/"],
+  reviews: ["Merge request reviews", "https://docs.gitlab.com/user/project/merge_requests/reviews/"],
   approvals: ["Merge request approvals", "https://docs.gitlab.com/user/project/merge_requests/approvals/"],
   protectedBranches: ["Protected branches", "https://docs.gitlab.com/user/project/repository/branches/protected/"],
   ciYaml: ["CI/CD YAML reference", "https://docs.gitlab.com/ci/yaml/"]
@@ -10,15 +11,15 @@ const chapterDetails = {
   ch01: {
     scenario: {
       title: "새 팀원이 첫날 실습 저장소에 들어옵니다",
-      body: "빈 GitLab project를 만들고 seed repository를 올립니다. 이 장에서 만든 구조가 뒤의 모든 챕터로 이어집니다.",
+      body: "빈 GitLab project를 만들고 seed repository를 올립니다. 첫 commit은 Maintainer가 bootstrap으로 처리하고, 이후 Developer는 feature branch와 MR로만 main에 들어갑니다.",
       files: ["README.md", ".gitignore", "public/index.html", "src/permissions.py", "docs/process.md", "docs/system-context.md", "tests/test_permissions.py"],
-      roles: ["Owner: project visibility와 member 초대 확인", "Maintainer: 기본 branch와 보호 정책 확인", "Developer: seed repo 첫 commit 작성", "Reporter: 저장소 구조와 문서 위치 확인"],
+      roles: ["Owner: project visibility와 member 초대 확인", "Maintainer: seed repo 첫 commit과 보호 정책 확인", "Developer: 이후 feature branch 작업 준비", "Reporter: 저장소 구조와 문서 위치 확인"],
       done: ["origin, main, HEAD, working tree를 한 문장으로 설명", "GitLab 화면에서 Members, Repository, Branches 위치 확인", "첫 commit과 push 결과를 GitLab commit graph에서 확인"]
     },
     handoff: [
       ["Owner", "실습 project 이름, visibility, 초대 범위를 정합니다."],
-      ["Maintainer", "main 보호 여부와 초기 branch 정책을 확인합니다."],
-      ["Developer", "seed repo를 복사하고 첫 commit을 만듭니다."],
+      ["Maintainer", "seed repo를 올리고 main 보호 여부와 초기 branch 정책을 확인합니다."],
+      ["Developer", "bootstrap 이후 feature branch로 작업할 준비를 합니다."],
       ["Reporter", "README와 docs에서 실습 목적과 파일 구조를 읽습니다."]
     ],
     tutorial: [
@@ -48,18 +49,17 @@ const chapterDetails = {
         check: ["origin fetch/push 주소가 같은 project를 가리키는지 확인", "현재 branch가 main인지 확인"]
       },
       {
-        title: "seed repository를 첫 commit으로 올립니다",
-        story: "뒤 챕터에서 계속 쓸 최소 코드, 문서, 테스트를 한 번에 넣습니다. 큰 기능보다 구조를 먼저 맞추는 commit입니다.",
+        title: "Maintainer가 seed repository를 첫 commit으로 올립니다",
+        story: "뒤 챕터에서 계속 쓸 최소 코드, 문서, 테스트를 한 번에 넣습니다. 실습에서는 이 bootstrap commit만 Maintainer가 main에 올리고, 이후 변경은 MR로만 처리합니다.",
         commands: [
           "git status --short",
           "git add README.md .gitignore public src docs tests",
-          "git add public src docs tests",
           "git diff --staged --stat",
           "git commit -m \"ch01: initialize tutorial collaboration seed\"",
           "git push -u origin main"
         ],
-        gitlab: ["Repository > Files에서 public, src, docs, tests 폴더 확인", "Repository > Commits에서 첫 commit 메시지 확인"],
-        check: ["working tree clean 확인", "GitLab에서 commit 작성자와 push한 branch 확인"]
+        gitlab: ["Repository > Files에서 public, src, docs, tests 폴더 확인", "Repository > Commits에서 첫 commit 메시지 확인", "Settings > Repository에서 main 보호 설정을 이어서 확인"],
+        check: ["working tree clean 확인", "GitLab에서 commit 작성자와 push한 branch 확인", "이후 Developer 작업은 feature branch에서 시작한다고 말하기"]
       },
       {
         title: "저장소 지도를 말로 정리합니다",
@@ -73,6 +73,7 @@ const chapterDetails = {
         check: ["main은 공유 기준선, working tree는 아직 commit 전 변경 위치라고 설명", "docs, src, tests가 이후 챕터에서 각각 어떤 역할을 맡는지 설명"]
       }
     ],
+    policy: "CH01의 첫 commit은 bootstrap 예외입니다. 이후 실습 정책은 main protected, direct push 금지, MR 기반 변경입니다.",
     takehome: "GitLab 실습은 명령어보다 저장소 지도와 역할 확인에서 시작합니다.",
     recap: ["권한이 막히면 먼저 내 role과 project 설정을 봅니다.", "첫 commit은 뒤 챕터의 공통 실습 재료입니다.", "main, origin, HEAD, working tree의 위치를 모르면 push와 MR 판단이 흔들립니다."],
     sources: [officialSources.roles, officialSources.protectedBranches]
@@ -327,9 +328,9 @@ const chapterDetails = {
   ch05: {
     scenario: {
       title: "MR이 왜 merge되지 않는지 역할별로 분리합니다",
-      body: "MR template, CODEOWNERS, protected branch, approval rule을 한 화면의 흐름으로 묶습니다. Developer, Reviewer, Maintainer가 같은 MR에서 보는 지점이 달라집니다.",
+      body: "MR template, CODEOWNERS, protected branch, approval rule을 한 화면의 흐름으로 묶습니다. 실습 정책은 main protected, Allowed to merge = Maintainers, Allowed to push and merge = No one, required approval과 successful pipeline입니다.",
       files: [".gitlab/merge_request_templates/standard.md", "CODEOWNERS", "docs/review-checklist.md", "docs/branch-planning.md", "docs/feature-flags.md"],
-      roles: ["Developer: MR 설명과 테스트 근거 작성", "Reviewer: diff, discussion, pipeline 확인", "Maintainer: approval rule과 protected branch 조건 확인", "Owner: 권한 정책이 과도하거나 느슨하지 않은지 확인"],
+      roles: ["Developer: MR 설명과 테스트 근거 작성", "Reviewer: diff, discussion, pipeline 확인", "Maintainer: approval rule과 protected branch 조건 확인", "Owner: 일상 승인보다 예외와 정책 영향 확인"],
       done: ["MR이 막힌 이유를 approval, discussion, pipeline, protected branch로 구분", "CODEOWNERS가 누구를 부르는지 설명", "merge 권한과 review 책임을 분리"]
     },
     handoff: [
@@ -370,30 +371,31 @@ const chapterDetails = {
       },
       {
         title: "protected branch와 approval rule을 연결해 봅니다",
-        story: "main이 protected이면 누구나 merge하거나 push할 수 없습니다. approval rule은 merge 전에 필요한 확인을 추가합니다.",
+        story: "protected branch는 설정값으로 동작합니다. 이 실습은 direct push를 막고 Maintainer만 MR merge할 수 있게 둔 팀 정책을 기준으로 읽습니다.",
         commands: [
           "git status",
           "git log --oneline --decorate -5",
           "git push"
         ],
         gitlab: ["Settings > Repository > Protected branches에서 main의 allowed to merge/push 확인", "Settings > Merge requests > Approval rules에서 승인 조건 확인", "MR widget에서 approvals, discussions, pipeline 상태 확인"],
-        check: ["Developer push 차단, Reviewer 승인 가능 여부, Maintainer merge 가능 여부를 각각 분리해 설명"]
+        check: ["Developer direct push 차단, Reviewer의 approve/request changes 책임, Maintainer merge 가능 여부를 각각 분리해 설명"]
       },
       {
         title: "막힌 MR의 원인을 표로 정리합니다",
-        story: "merge 버튼이 비활성화된 이유는 하나가 아닙니다. 권한, 승인, pipeline, unresolved discussion을 따로 봅니다.",
+        story: "merge 버튼이 비활성화된 이유는 하나가 아닙니다. 일반 comment와 unresolved thread, required approval, pipeline, protected branch를 따로 봅니다.",
         commands: [
           "git fetch origin",
           "git log --oneline --left-right --graph HEAD...origin/main",
           "git diff origin/main...HEAD --stat"
         ],
         gitlab: ["MR Overview의 상태 메시지 읽기", "Discussions에서 unresolved 항목 확인", "Pipelines 탭에서 실패 job 확인"],
-        check: ["막힌 이유와 다음 담당자를 함께 기록", "권한 문제가 아닌 실패를 권한 요청으로 풀지 않도록 구분"]
+        check: ["막힌 이유와 다음 담당자를 함께 기록", "unresolved thread가 merge block 신호인지 확인", "권한 문제가 아닌 실패를 권한 요청으로 풀지 않도록 구분"]
       }
     ],
+    policy: "Required approval은 GitLab tier와 project 설정에 따라 달라집니다. 이 강의는 approval rule이 켜진 팀 운영을 가정하고, Free/basic 흐름에서는 approval을 리뷰 신호로 읽습니다.",
     takehome: "MR은 merge 버튼 앞의 대기실이 아니라 변경 이유, 검토 근거, 운영 조건을 모으는 장소입니다.",
     recap: ["Reviewer는 책임이고 Maintainer는 권한입니다.", "approval, pipeline, discussion, protected branch는 서로 다른 조건입니다.", "권한을 열기 전에 MR 흐름으로 해결 가능한지 먼저 봅니다."],
-    sources: [officialSources.roles, officialSources.mrAuth, officialSources.approvals, officialSources.protectedBranches]
+    sources: [officialSources.roles, officialSources.mrAuth, officialSources.reviews, officialSources.approvals, officialSources.protectedBranches]
   },
   ch06: {
     scenario: {
@@ -512,7 +514,7 @@ const chapterDetails = {
         story: "stage는 순서, job은 실제 작업 단위입니다. 각 job은 실패했을 때 담당자가 달라질 수 있습니다.",
         commands: [
           "cat > .gitlab-ci.yml <<'YAML'",
-          "stages: [test, build, smoke]",
+          "stages: [test, build, smoke, deploy]",
           "test:",
           "  image: python:3.12",
           "  script:",
@@ -572,14 +574,15 @@ const chapterDetails = {
       title: "issue에서 rollback 판단까지 한 번에 연결합니다",
       body: "지금까지 만든 저장소와 운영 규칙을 사용해 capstone feature를 구현합니다. 마지막에는 우리 팀의 기본 GitLab 운영 규칙을 문장으로 남깁니다.",
       files: ["issues/ISSUE-101-sample-action.md", "src/sample_action.py", "tests/test_sample_action.py", "docs/release-decision-log.md", "public/index.html", "docs/feature-flags.md", ".gitlab-ci.yml"],
-      roles: ["Reporter: issue와 재현 조건 작성", "Developer: branch, commit, MR 작성", "Reviewer: 변경 이유와 rollback 기준 확인", "Maintainer: pipeline과 approval 뒤 merge 판단", "Owner: 운영 규칙 승인"],
+      roles: ["Guest: 사용 관점의 증상 제보", "Reporter: issue와 재현 조건 작성", "Developer: branch, commit, MR 작성", "Reviewer: 변경 이유와 rollback 기준 확인", "Maintainer: pipeline과 approval 뒤 merge 판단", "Owner: 예외 정책과 권한 영향 확인"],
       done: ["issue, branch, commit, MR, pipeline, merge, rollback 흐름 연결", "역할별 다음 행동 설명", "팀 운영 규칙 초안 작성"]
     },
     handoff: [
       ["Reporter", "ISSUE-101에 요구와 재현 조건을 정리합니다."],
       ["Developer", "issue 번호가 보이는 branch와 commit으로 구현합니다."],
       ["Reviewer", "MR에서 테스트와 rollback 기준을 확인합니다."],
-      ["Maintainer", "pipeline과 approval을 확인한 뒤 merge합니다."]
+      ["Maintainer", "pipeline과 approval을 확인한 뒤 merge합니다."],
+      ["Owner", "평소 MR 승인자가 아니라 visibility, 권한 완화, emergency bypass 같은 예외만 판단합니다."]
     ],
     tutorial: [
       {
@@ -590,7 +593,13 @@ const chapterDetails = {
           "git pull --ff-only",
           "git switch -c feature/issue-101-sample-action",
           "mkdir -p issues",
-          "cp <lecture-assets>/issues/ISSUE-101-sample-action.md issues/ISSUE-101-sample-action.md",
+          "cat > issues/ISSUE-101-sample-action.md <<'MD'",
+          "# ISSUE-101 Sample action visibility",
+          "",
+          "- Reporter confirms the button should be visible only to Maintainer and Owner.",
+          "- Developer updates src/sample_action.py and tests/test_sample_action.py.",
+          "- Reviewer checks test output and rollback trigger.",
+          "MD",
           "git status --short"
         ],
         gitlab: ["Issues에서 요구사항, 담당자, label, milestone 확인", "MR 생성 전 branch 이름에 issue 번호가 보이는지 확인"],
@@ -600,8 +609,21 @@ const chapterDetails = {
         title: "기능과 테스트를 작은 commit으로 연결합니다",
         story: "구현 파일과 테스트 파일은 같은 MR 안에서 서로를 설명합니다. 기능 flag와 app 연결부까지 함께 확인합니다.",
         commands: [
-          "cp <lecture-assets>/src/sample_action.py src/sample_action.py",
-          "cp <lecture-assets>/tests/test_sample_action.py tests/test_sample_action.py",
+          "mkdir -p src tests",
+          "cat > src/sample_action.py <<'PY'",
+          "def visible_to(role):",
+          "    return role in {\"Maintainer\", \"Owner\"}",
+          "PY",
+          "cat > tests/test_sample_action.py <<'PY'",
+          "import unittest",
+          "from src.sample_action import visible_to",
+          "",
+          "class SampleActionTest(unittest.TestCase):",
+          "    def test_visible_to_operator_roles(self):",
+          "        self.assertTrue(visible_to(\"Maintainer\"))",
+          "        self.assertTrue(visible_to(\"Owner\"))",
+          "        self.assertFalse(visible_to(\"Reporter\"))",
+          "PY",
           "git diff -- src/sample_action.py tests/test_sample_action.py",
           "git add src/sample_action.py tests/test_sample_action.py",
           "git commit -m \"feat: add sample action\"",
@@ -615,7 +637,13 @@ const chapterDetails = {
         story: "capstone MR은 코드만 올리지 않습니다. 리뷰어가 판단할 수 있도록 변경 이유, 테스트, rollback 기준을 채웁니다.",
         commands: [
           "mkdir -p docs",
-          "cp <lecture-assets>/docs/release-decision-log.md docs/release-decision-log.md",
+          "cat > docs/release-decision-log.md <<'MD'",
+          "# Release Decision Log",
+          "",
+          "- approval complete",
+          "- pipeline passed",
+          "- rollback trigger: wrong role visibility",
+          "MD",
           "git add docs/release-decision-log.md public/index.html docs/feature-flags.md",
           "git commit -m \"docs: record release decision for sample action\"",
           "git push -u origin feature/issue-101-sample-action"
@@ -640,7 +668,8 @@ const chapterDetails = {
     ],
     takehome: "좋은 GitLab 운영은 누가 버튼을 눌렀는지가 아니라 왜 그 순서로 처리했는지가 남는 것입니다.",
     recap: ["issue는 branch와 MR의 출발점입니다.", "MR은 구현, 테스트, 운영 판단을 묶습니다.", "merge 뒤에도 rollback 판단과 기록이 남아야 합니다."],
-    sources: [officialSources.roles, officialSources.mrAuth, officialSources.approvals, officialSources.ciYaml]
+    policy: "Owner는 모든 MR의 상시 승인자가 아닙니다. capstone에서는 외부 협력자 초대, visibility 변경, approval rule 완화, emergency bypass가 생길 때만 개입합니다.",
+    sources: [officialSources.roles, officialSources.mrAuth, officialSources.reviews, officialSources.approvals, officialSources.ciYaml]
   }
 };
 
@@ -648,6 +677,26 @@ const labWorkspaces = {
   ch01: {
     tree: ["README.md", ".gitignore", "public/index.html", "src/permissions.py", "docs/process.md", "docs/system-context.md", "tests/test_permissions.py"],
     files: {
+      "README.md": {
+        why: "처음 저장소에 들어온 사람이 실습 목적과 실행 순서를 확인하는 입구입니다.",
+        content: `# GitLab Training Seed
+
+이 저장소는 GitLab 온보딩 실습을 위한 최소 예제입니다.
+
+## 흐름
+
+1. issue로 요구를 정리한다.
+2. feature branch에서 변경한다.
+3. MR에서 리뷰, pipeline, rollback 기준을 확인한다.`
+      },
+      ".gitignore": {
+        why: "실습 중 생기는 캐시와 임시 파일을 commit에서 제외합니다.",
+        content: `__pycache__/
+*.pyc
+.venv/
+dist/
+tmp/`
+      },
       "src/permissions.py": {
         why: "역할별 허용 여부를 아주 작은 Python 함수로 표현합니다. 문법보다 입력과 출력이 보이는 것이 중요합니다.",
         content: `ALLOWED_SAMPLE_ACTION_ROLES = {"Owner", "Maintainer"}
@@ -698,6 +747,14 @@ if __name__ == "__main__":
 2. 참가자는 변경 요청 항목을 제출한다.
 3. 참가자는 가이드 문서를 읽고 필요한 파일을 수정한다.
 4. 참가자는 변경 요약을 제출한다.`
+      },
+      "docs/system-context.md": {
+        why: "이 저장소가 어떤 GitLab 정책을 가정하는지 짧게 기록합니다.",
+        content: `# System Context
+
+- default branch: main
+- policy: protected main, direct push disabled
+- merge path: feature branch -> MR -> review -> pipeline -> Maintainer merge`
       }
     }
   },
@@ -1026,6 +1083,16 @@ function renderActionCard(title, items) {
   `;
 }
 
+function renderPolicyNote(policy) {
+  if (!policy) return "";
+  return `
+    <div class="policy-note">
+      <strong>실습 가정</strong>
+      <span>${escapeHtml(policy)}</span>
+    </div>
+  `;
+}
+
 function commandGuide(command) {
   const text = command.trim();
   const guides = [
@@ -1061,10 +1128,10 @@ function commandGuide(command) {
     [/^python -m unittest discover -s tests$/, "Ran 2 tests in 0.001s\n\nOK", "Python 표준 테스트를 실행합니다. tests 폴더 아래의 테스트 파일을 찾아 역할 규칙을 확인합니다."],
     [/^python scripts\/check_docs\.py$/, "docs check passed", "Markdown과 HTML 파일이 실습 기준을 만족하는지 확인합니다."],
     [/^python scripts\/smoke_check\.py$/, "smoke check passed", "전체 테스트보다 가벼운 운영 전제 확인입니다. 문서 구조나 feature flag 문구 같은 조건을 빠르게 봅니다."],
-    [/^mkdir -p /, "directory ready", "필요한 폴더가 없으면 만들고, 이미 있으면 그대로 둡니다."],
-    [/^printf /, "file content written", "실습용 문구를 파일에 씁니다. Windows PowerShell에서는 같은 의미의 Set-Content로 바꿔 실행해도 됩니다."],
-    [/^cp /, "file copied", "강의 자산을 실습 저장소의 대상 경로로 복사합니다."],
-    [/^cat >|^cat >>/, "입력 블록을 파일에 기록합니다.", "here-document로 여러 줄 파일을 한 번에 만듭니다. YAML처럼 들여쓰기가 중요한 파일에 적합합니다."]
+    [/^mkdir -p /, "directory ready", "필요한 폴더가 없으면 만들고, 이미 있으면 그대로 둡니다. PowerShell에서는 New-Item -ItemType Directory -Force <path>로 바꿀 수 있습니다."],
+    [/^printf /, "file content written", "실습용 문구를 파일에 씁니다. PowerShell에서는 Set-Content 또는 @' ... '@ | Set-Content <file> 형식으로 바꿉니다."],
+    [/^cp /, "file copied", "강의 자산을 실습 저장소의 대상 경로로 복사합니다. PowerShell에서는 Copy-Item <source> <target>을 씁니다."],
+    [/^cat >|^cat >>/, "입력 블록을 파일에 기록합니다.", "here-document로 여러 줄 파일을 한 번에 만듭니다. PowerShell에서는 @' ... '@ | Set-Content <file> 또는 Add-Content로 바꿉니다."]
   ];
 
   const found = guides.find(([pattern]) => pattern.test(text));
@@ -1079,19 +1146,37 @@ function commandGuide(command) {
   };
 }
 
+function commandKind(command) {
+  const text = command.trim();
+  if (text.startsWith("#")) return "note";
+  if (/^[A-Za-z0-9_.-]+:/.test(text) || text.startsWith("  ") || text === "YAML" || text === "PY" || text === "MD" || text === "") return "file";
+  return "command";
+}
+
 function renderCommandRunner(commands, stepIndex) {
   if (!commands || commands.length === 0) return "";
-  const firstGuide = commandGuide(commands[0]);
+  const firstCommand = commands.find((command) => commandKind(command) === "command") || commands[0];
+  const firstGuide = commandGuide(firstCommand);
   return `
     <div class="command-runner" data-step-index="${stepIndex}">
       <div class="command-list" aria-label="명령어 선택">
         ${renderList(commands, (command, commandIndex) => {
           const guide = commandGuide(command);
+          const kind = commandKind(command);
+          if (kind !== "command") {
+            return `
+              <div class="command-line command-line-static kind-${kind}">
+                <span>${kind === "file" ? "파일 내용" : "설명"}</span>
+                <code>${escapeHtml(command || "빈 줄")}</code>
+              </div>
+            `;
+          }
           return `
-            <button class="command-line ${commandIndex === 0 ? "active" : ""}" type="button"
+            <button class="command-line ${command === firstCommand ? "active" : ""}" type="button"
               data-command="${escapeHtml(command)}"
               data-output="${escapeHtml(guide.output)}"
-              data-meaning="${escapeHtml(guide.meaning)}">
+              data-meaning="${escapeHtml(guide.meaning)}"
+              aria-current="${command === firstCommand ? "true" : "false"}">
               <code>${escapeHtml(command)}</code>
             </button>
           `;
@@ -1140,7 +1225,8 @@ function renderWorkspaceExplorer(workspace) {
               <button class="file-node ${path === firstPath ? "active" : ""}" type="button"
                 data-file-path="${escapeHtml(path)}"
                 data-file-why="${escapeHtml(file?.why || "이 경로는 이번 장의 실습 흐름에서 확인합니다.")}"
-                data-file-content="${escapeHtml(file?.content || `${path}\n\n이 파일은 GitLab Changes 화면과 로컬 diff에서 확인합니다.`)}">
+                data-file-content="${escapeHtml(file?.content || `${path}\n\n이 파일은 GitLab Changes 화면과 로컬 diff에서 확인합니다.`)}"
+                aria-current="${path === firstPath ? "true" : "false"}">
                 ${escapeHtml(path)}
               </button>
             `;
@@ -1191,7 +1277,11 @@ function hydrateWorkspaceExplorer(root) {
     const content = workspace.querySelector("[data-file-content-target]");
     workspace.querySelectorAll(".file-node").forEach((button) => {
       button.addEventListener("click", () => {
-        workspace.querySelectorAll(".file-node").forEach((node) => node.classList.toggle("active", node === button));
+        workspace.querySelectorAll(".file-node").forEach((node) => {
+          const active = node === button;
+          node.classList.toggle("active", active);
+          node.setAttribute("aria-current", String(active));
+        });
         title.textContent = button.dataset.filePath;
         why.textContent = button.dataset.fileWhy;
         content.textContent = button.dataset.fileContent;
@@ -1206,7 +1296,11 @@ function hydrateCommandRunners(root) {
     const meaning = runner.querySelector(".command-meaning");
     runner.querySelectorAll(".command-line").forEach((button) => {
       button.addEventListener("click", () => {
-        runner.querySelectorAll(".command-line").forEach((line) => line.classList.toggle("active", line === button));
+        runner.querySelectorAll(".command-line").forEach((line) => {
+          const active = line === button;
+          line.classList.toggle("active", active);
+          if (line.tagName === "BUTTON") line.setAttribute("aria-current", String(active));
+        });
         output.textContent = button.dataset.output;
         meaning.textContent = button.dataset.meaning;
       });
@@ -1229,7 +1323,7 @@ async function initChapter() {
 
     root.innerHTML = `
       <section class="page-shell chapter-page">
-        <a class="breadcrumb" href="../../index.html#chapters">챕터 소개로 돌아가기</a>
+        <a class="breadcrumb" href="../../index.html#chapters">실습 챕터로 돌아가기</a>
         <div class="chapter-hero">
           <aside class="chapter-side">
             <div class="chapter-number">${escapeHtml(chapter.number)}</div>
@@ -1243,6 +1337,7 @@ async function initChapter() {
               <p class="section-label">이번 장의 상황</p>
               <h2>${escapeHtml(detail.scenario.title)}</h2>
               <p>${escapeHtml(detail.scenario.body)}</p>
+              ${renderPolicyNote(detail.policy)}
               <div class="chapter-brief">
                 <div class="brief-item">
                   <strong>사용 파일</strong>
@@ -1283,7 +1378,7 @@ async function initChapter() {
             </article>
 
             <article class="chapter-block">
-              <p class="section-label">Take Home Messages</p>
+              <p class="section-label">핵심 정리</p>
               <h2>${escapeHtml(detail.takehome)}</h2>
               <ul class="chapter-list">
                 ${renderList(detail.recap, (text) => `<li>${escapeHtml(text)}</li>`)}
@@ -1298,7 +1393,7 @@ async function initChapter() {
   } catch (error) {
     root.innerHTML = `
       <section class="page-shell chapter-page">
-        <a class="breadcrumb" href="../../index.html#chapters">챕터 소개로 돌아가기</a>
+        <a class="breadcrumb" href="../../index.html#chapters">실습 챕터로 돌아가기</a>
         <div class="result-box">
           <span class="result-status status-block">로드 실패</span>
           <p class="result-copy">${escapeHtml(error.message)}</p>

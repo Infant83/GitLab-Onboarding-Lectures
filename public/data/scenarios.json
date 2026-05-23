@@ -2,7 +2,7 @@
   {
     "id": "protected-main-push",
     "title": "Developer가 main에 직접 push하려 합니다",
-    "context": "main은 protected branch입니다. 지금 역할은 기능을 수정한 Developer이고, 변경은 아직 feature branch에 있습니다.",
+    "context": "이번 실습 정책은 main protected, Allowed to merge = Maintainers, Allowed to push and merge = No one입니다. Developer의 변경은 아직 feature branch에 있습니다.",
     "choices": [
       {
         "label": "feature branch를 만들고 그 branch로 push한 뒤 MR을 엽니다.",
@@ -23,11 +23,11 @@
   },
   {
     "id": "reviewer-approval",
-    "title": "Reviewer가 MR을 승인할지 판단합니다",
-    "context": "diff는 작지만 pipeline이 아직 끝나지 않았고 rollback 기준도 MR 설명에 없습니다.",
+    "title": "Reviewer가 approve 또는 request changes를 판단합니다",
+    "context": "Reviewer는 GitLab 접근 role 이름이 아니라 MR 안의 책임입니다. 이 실습은 eligible approver가 required approval rule 아래에서 검토하는 상황을 가정합니다.",
     "choices": [
       {
-        "label": "변경 의도, 테스트 결과, rollback 기준을 MR에 남기도록 요청합니다.",
+        "label": "변경 의도, 테스트 결과, rollback 기준을 MR에 남기도록 요청하고 필요하면 request changes를 선택합니다.",
         "tone": "correct",
         "feedback": "좋습니다. Reviewer의 일은 막는 것이 아니라 merge 전에 판단 근거를 선명하게 만드는 일입니다."
       },
@@ -59,9 +59,9 @@
         "feedback": "긴급 hotfix가 아니라면 기준을 끄지 않습니다. 기준을 바꾸면 그 이유와 복구 시점을 남겨야 합니다."
       },
       {
-        "label": "Reviewer가 approve를 취소합니다.",
-        "tone": "wrong",
-        "feedback": "필요할 수는 있지만 첫 행동은 실패 원인 확인입니다. approval과 pipeline 실패는 따로 봐야 합니다."
+        "label": "Reviewer가 request changes를 남기고 re-review를 요청합니다.",
+        "tone": "risky",
+        "feedback": "상황에 따라 맞을 수 있습니다. 다만 첫 행동은 실패 로그 triage입니다. 실패가 변경 위험을 드러내면 request changes와 재검토가 자연스럽습니다."
       }
     ]
   },
@@ -84,6 +84,138 @@
         "label": "협력자에게 필요한 최소 권한과 별도 저장소가 가능한지 먼저 확인합니다.",
         "tone": "correct",
         "feedback": "좋습니다. 공개 전환보다 최소 권한, 별도 project, fork 가능 여부를 먼저 따져봅니다."
+      }
+    ]
+  },
+  {
+    "id": "local-state-before-commit",
+    "title": "commit 전에 변경 위치를 확인합니다",
+    "context": "CH02 실습 중 notes.txt와 docs/tutorial-guide.md를 수정했습니다. 아직 무엇이 staged인지 확실하지 않습니다.",
+    "choices": [
+      {
+        "label": "git status --short와 git diff --staged를 보고 commit 후보를 확인합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. commit 전에 working tree와 staging area를 나누어 보면 실수한 파일을 빼낼 수 있습니다."
+      },
+      {
+        "label": "바로 git commit -am으로 모두 묶습니다.",
+        "tone": "risky",
+        "feedback": "추적 중인 파일만 들어가고 새 파일은 빠질 수 있습니다. 초보 실습에서는 add와 diff를 명시적으로 보는 편이 안전합니다."
+      },
+      {
+        "label": "GitLab 화면에서 먼저 commit이 보이는지 확인합니다.",
+        "tone": "wrong",
+        "feedback": "아직 push 전이면 GitLab에는 로컬 commit도, uncommitted change도 보이지 않습니다."
+      }
+    ]
+  },
+  {
+    "id": "published-history-recovery",
+    "title": "공유된 branch의 문제 commit을 되돌립니다",
+    "context": "CH03에서 문제 commit이 이미 원격 branch에 올라갔고 MR에도 보입니다. 다른 사람도 그 이력을 기준으로 리뷰 중입니다.",
+    "choices": [
+      {
+        "label": "원인 commit을 찾고 git revert로 복구 commit을 만들어 MR에 남깁니다.",
+        "tone": "correct",
+        "feedback": "맞습니다. 공유 이력에서는 되돌린 근거가 새 commit으로 남아야 팀원이 같은 기준선을 볼 수 있습니다."
+      },
+      {
+        "label": "git reset --hard로 commit을 지우고 force push합니다.",
+        "tone": "risky",
+        "feedback": "팀 정책에 따라 예외적으로 가능할 수 있지만 기본값은 아닙니다. 공유 branch에서는 리뷰 기준선을 흔들 수 있습니다."
+      },
+      {
+        "label": "MR을 닫고 같은 내용을 새 MR로 다시 엽니다.",
+        "tone": "wrong",
+        "feedback": "문제 원인과 복구 기록이 흩어집니다. 먼저 현재 MR에서 원인과 복구를 설명할 수 있는지 봅니다."
+      }
+    ]
+  },
+  {
+    "id": "branch-out-of-date",
+    "title": "push가 non-fast-forward로 거절됐습니다",
+    "context": "CH04에서 같은 branch에 다른 commit이 먼저 올라갔습니다. 터미널은 fetch first 또는 non-fast-forward 메시지를 보여줍니다.",
+    "choices": [
+      {
+        "label": "git fetch 후 HEAD...@{u}를 비교하고 merge 또는 rebase를 선택합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. 거절 원인을 권한으로 단정하지 않고 원격과 로컬의 차이를 먼저 봅니다."
+      },
+      {
+        "label": "권한이 없다고 판단하고 Maintainer에게 merge를 부탁합니다.",
+        "tone": "wrong",
+        "feedback": "non-fast-forward는 보통 권한 문제가 아닙니다. 원격이 앞섰는지 비교하는 것이 먼저입니다."
+      },
+      {
+        "label": "무조건 --force로 다시 push합니다.",
+        "tone": "risky",
+        "feedback": "개인 branch에서도 조심해야 합니다. 공유 branch라면 다른 사람의 commit을 숨길 수 있습니다."
+      }
+    ]
+  },
+  {
+    "id": "conflict-handoff",
+    "title": "conflict marker가 남은 파일을 리뷰합니다",
+    "context": "CH06에서 Developer가 conflict를 해결했다고 말했지만 docs/process.md에 marker와 어색한 문장이 남아 있습니다.",
+    "choices": [
+      {
+        "label": "Reviewer가 marker 위치와 의도 보존 여부를 코멘트하고, Developer가 수정 commit을 다시 push합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. conflict 해결은 marker 삭제가 아니라 최종 문장의 의미를 다시 검토하는 일입니다."
+      },
+      {
+        "label": "Maintainer가 파일 하나를 선택해 바로 merge합니다.",
+        "tone": "wrong",
+        "feedback": "한쪽 선택은 의도를 잃을 수 있습니다. 두 변경이 왜 필요했는지 보고 최종 문장으로 다시 써야 합니다."
+      },
+      {
+        "label": "pipeline이 통과하면 문장은 나중에 고칩니다.",
+        "tone": "risky",
+        "feedback": "문서나 HTML의 의미 conflict는 테스트가 잡지 못할 수 있습니다. 리뷰에서 사람이 확인해야 합니다."
+      }
+    ]
+  },
+  {
+    "id": "rollback-decision",
+    "title": "merge 뒤 잘못된 역할에 버튼이 보입니다",
+    "context": "CH08 capstone merge 이후 Reporter에게 Maintainer용 action이 보입니다. pipeline은 통과했습니다.",
+    "choices": [
+      {
+        "label": "영향 범위를 확인하고 feature flag off, revert MR, hotfix branch 중 하나를 선택합니다.",
+        "tone": "correct",
+        "feedback": "맞습니다. 성공한 pipeline이 운영 판단을 대신하지 않습니다. 노출 범위와 복구 시간을 기준으로 고릅니다."
+      },
+      {
+        "label": "pipeline이 통과했으니 사용자 착각으로 봅니다.",
+        "tone": "wrong",
+        "feedback": "권한 노출 문제는 테스트 통과와 별개입니다. Reporter 재현 조건과 화면 증거를 먼저 확인합니다."
+      },
+      {
+        "label": "Owner가 project visibility를 private으로 바꿉니다.",
+        "tone": "risky",
+        "feedback": "visibility 변경은 큰 조치입니다. 특정 role 노출 문제라면 기능 flag, revert, hotfix가 먼저입니다."
+      }
+    ]
+  },
+  {
+    "id": "same-mr-role-chain",
+    "title": "같은 MR을 역할별로 넘겨받습니다",
+    "context": "ISSUE-101에서 시작한 변경이 MR로 올라왔습니다. 팀은 Guest/Reporter/Developer/Reviewer/Maintainer/Owner가 모두 같은 변경을 각자 다른 책임으로 봅니다.",
+    "choices": [
+      {
+        "label": "Reporter가 재현 조건을 정리하고, Developer가 branch/MR을 만들고, Reviewer가 diff와 rollback 기준을 검토한 뒤, Maintainer가 merge 조건을 확인합니다.",
+        "tone": "correct",
+        "feedback": "좋습니다. 역할은 권한 표가 아니라 같은 변경을 넘겨받는 책임의 순서입니다."
+      },
+      {
+        "label": "Owner가 모든 MR을 직접 승인하고 merge합니다.",
+        "tone": "wrong",
+        "feedback": "Owner는 일상 MR 승인자가 아닙니다. visibility, 권한 완화, emergency bypass 같은 예외와 정책 판단에 개입합니다."
+      },
+      {
+        "label": "Reviewer가 merge까지 처리합니다.",
+        "tone": "risky",
+        "feedback": "Reviewer 책임과 merge 권한은 다릅니다. Reviewer가 Maintainer 권한도 가진 사람일 수는 있지만, 수업에서는 검토 책임과 merge 판단을 분리합니다."
       }
     ]
   }

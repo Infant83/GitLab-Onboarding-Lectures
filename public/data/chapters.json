@@ -2,7 +2,7 @@
   {
     "id": "ch01",
     "number": "01",
-    "title": "Course Foundation and Operating Model",
+    "title": "강의 준비와 운영 모델",
     "focus": "GitLab 협업에서 왜 역할과 흐름이 먼저인지 잡습니다.",
     "objective": "내 역할과 저장소 구조를 먼저 맞춥니다.",
     "lab": "환경 점검, 인증 방식 확인, seed repo 준비",
@@ -15,7 +15,7 @@
   {
     "id": "ch02",
     "number": "02",
-    "title": "Local Workflow and Core Commands",
+    "title": "로컬 작업 흐름과 핵심 명령",
     "focus": "내 변경이 working tree, staging area, commit, remote 중 어디에 있는지 봅니다.",
     "objective": "변경이 어느 상태에 있는지 보고 다음 명령을 고릅니다.",
     "lab": "clone, add, commit, push, fetch, pull",
@@ -28,7 +28,7 @@
   {
     "id": "ch03",
     "number": "03",
-    "title": "History Inspection and Recovery",
+    "title": "이력 확인과 복구",
     "focus": "이력을 읽고, 공개된 변경은 안전한 방식으로 되돌립니다.",
     "objective": "문제 commit을 찾고 공개 이력을 안전하게 복구합니다.",
     "lab": "log, show, diff, stash, bisect, revert",
@@ -41,7 +41,7 @@
   {
     "id": "ch04",
     "number": "04",
-    "title": "Branch Strategy and Sync Decisions",
+    "title": "브랜치 전략과 동기화 판단",
     "focus": "branch를 나누고, merge와 rebase를 상황에 맞게 고릅니다.",
     "objective": "원격이 앞선 상황에서 fetch 뒤 비교하고 판단합니다.",
     "lab": "feature branch, tracking branch, merge/rebase 비교",
@@ -54,7 +54,7 @@
   {
     "id": "ch05",
     "number": "05",
-    "title": "Project Structure, Permissions, and MR",
+    "title": "프로젝트 구조, 권한, MR",
     "focus": "누가 MR을 만들고, 누가 승인하고, 누가 merge할 수 있는지 확인합니다.",
     "objective": "권한, MR, approval, protected branch를 한 흐름으로 읽습니다.",
     "lab": "MR template, CODEOWNERS, protected branch, approval",
@@ -67,7 +67,7 @@
   {
     "id": "ch06",
     "number": "06",
-    "title": "Team Collaboration, Conflict, and Rollback Lab",
+    "title": "팀 협업, 충돌 해결, 롤백",
     "focus": "conflict가 났을 때 marker를 읽고 팀 단위로 복구 판단을 합니다.",
     "objective": "충돌을 해결하고 리뷰 피드백을 다시 push합니다.",
     "lab": "동일 파일 병렬 수정, conflict 해결, rollback 토론",
@@ -80,7 +80,7 @@
   {
     "id": "ch07",
     "number": "07",
-    "title": "CI/CD Quality Gates and Self-Managed Operations",
+    "title": "CI/CD 품질 관문과 운영 점검",
     "focus": "pipeline이 merge 판단에 주는 신호와 self-managed 운영 제약을 읽습니다.",
     "objective": "pipeline 실패가 코드 문제인지 운영 문제인지 나눕니다.",
     "lab": ".gitlab-ci.yml, job log, artifact, runner, protected variable",
@@ -93,7 +93,7 @@
   {
     "id": "ch08",
     "number": "08",
-    "title": "Capstone Scenario and Role-Based Playbook",
+    "title": "종합 실습과 역할별 플레이북",
     "focus": "issue에서 rollback까지 전체 흐름을 역할별 플레이북으로 묶습니다.",
     "objective": "issue부터 merge 이후 복구 판단까지 한 번에 연결합니다.",
     "lab": "issue, branch, commit, MR, review, approval, merge, pipeline, rollback",
