@@ -593,11 +593,52 @@ select {
 .chapter-card {
   display: grid;
   gap: 0.68rem;
-  min-height: 17.5rem;
+  min-height: 19.5rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.58);
   padding: 0.88rem;
+}
+
+.chapter-card-visual {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(49, 75, 66, 0.12);
+  border-radius: var(--radius);
+  aspect-ratio: 3 / 2;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.chapter-card-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chapter-card-visual figcaption {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: fit-content;
+  max-width: calc(100% - 1rem);
+  border: 1px solid rgba(246, 240, 229, 0.84);
+  border-radius: var(--radius);
+  background: rgba(246, 240, 229, 0.84);
+  color: var(--text);
+  padding: 0.28rem 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.chapter-card-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.68rem;
+  align-items: start;
 }
 
 .chapter-number {
@@ -628,6 +669,23 @@ select {
 
 .chapter-meta span {
   color: var(--muted);
+}
+
+.chapter-command-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chapter-command-chips code {
+  border: 1px solid rgba(49, 75, 66, 0.16);
+  border-radius: var(--radius);
+  background: rgba(31, 45, 40, 0.06);
+  color: var(--accent);
+  padding: 0.26rem 0.4rem;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .chapter-links {
@@ -931,6 +989,135 @@ select {
 .policy-note span {
   color: var(--muted);
   font-size: 0.9rem;
+  word-break: keep-all;
+}
+
+.scene-visual-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(17rem, 0.88fr);
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.scene-visual {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(49, 75, 66, 0.13);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.54);
+  aspect-ratio: 3 / 2;
+}
+
+.scene-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scene-visual figcaption {
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  display: grid;
+  gap: 0.15rem;
+  width: fit-content;
+  max-width: calc(100% - 1.4rem);
+  border: 1px solid rgba(246, 240, 229, 0.86);
+  border-radius: var(--radius);
+  background: rgba(246, 240, 229, 0.88);
+  padding: 0.45rem 0.55rem;
+}
+
+.scene-visual figcaption span {
+  color: var(--accent-warm);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.scene-visual figcaption strong {
+  font-size: 0.92rem;
+  line-height: 1.18;
+}
+
+.scene-command-panel {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.54);
+  padding: 0.75rem;
+}
+
+.scene-command-panel h3 {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.scene-command-buttons {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.scene-command {
+  min-height: 2.3rem;
+  border: 1px solid rgba(49, 75, 66, 0.18);
+  border-radius: var(--radius);
+  background: #1f2d28;
+  color: #f6f0e5;
+  cursor: pointer;
+  padding: 0.45rem 0.55rem;
+  text-align: left;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.scene-command:hover,
+.scene-command.active {
+  border-color: rgba(156, 125, 93, 0.82);
+  background: #2b4038;
+}
+
+.scene-command code,
+.scene-command-result code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.scene-command-result {
+  display: grid;
+  gap: 0.35rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.55rem;
+}
+
+.scene-command-result .section-label {
+  margin: 0;
+  font-size: 0.7rem;
+}
+
+.scene-command-result pre {
+  max-height: 7rem;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid rgba(49, 75, 66, 0.14);
+  border-radius: var(--radius);
+  background: #24352f;
+  color: #f6f0e5;
+  padding: 0.58rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.scene-command-result p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
   word-break: keep-all;
 }
 
@@ -1305,6 +1492,7 @@ select {
 
   .tutorial-step,
   .chapter-brief,
+  .scene-visual-grid,
   .workspace-grid,
   .command-runner,
   .relay-grid {

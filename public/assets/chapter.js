@@ -1192,6 +1192,53 @@ function renderCommandRunner(commands, stepIndex) {
   `;
 }
 
+function renderSceneVisual(chapter) {
+  const visual = chapter.illustration;
+  if (!visual) return "";
+  const commands = visual.commands || [];
+  const firstCommand = commands[0];
+  const firstGuide = firstCommand ? commandGuide(firstCommand) : null;
+  return `
+    <div class="scene-visual-grid">
+      <figure class="scene-visual">
+        <img src="../../${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}" width="1536" height="1024">
+        <figcaption>
+          <span>상황 컷</span>
+          <strong>${escapeHtml(visual.cue)}</strong>
+        </figcaption>
+      </figure>
+      ${commands.length ? `
+        <div class="scene-command-panel">
+          <div>
+            <p class="section-label">첫 확인 명령</p>
+            <h3>${escapeHtml(visual.cue)}</h3>
+          </div>
+          <div class="scene-command-buttons" aria-label="상황 컷과 연결된 명령어">
+            ${renderList(commands, (command, index) => {
+              const guide = commandGuide(command);
+              return `
+                <button class="scene-command ${index === 0 ? "active" : ""}" type="button"
+                  data-command="${escapeHtml(command)}"
+                  data-output="${escapeHtml(guide.output)}"
+                  data-meaning="${escapeHtml(guide.meaning)}"
+                  aria-current="${index === 0 ? "true" : "false"}">
+                  <code>${escapeHtml(command)}</code>
+                </button>
+              `;
+            })}
+          </div>
+          <div class="scene-command-result" aria-live="polite">
+            <p class="section-label">예상 출력</p>
+            <pre><code>${escapeHtml(firstGuide.output)}</code></pre>
+            <p class="section-label">의미</p>
+            <p>${escapeHtml(firstGuide.meaning)}</p>
+          </div>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
 function workspaceFor(id, detail) {
   if (labWorkspaces[id]) return labWorkspaces[id];
   const files = Object.fromEntries(
@@ -1294,12 +1341,30 @@ function hydrateCommandRunners(root) {
   root.querySelectorAll(".command-runner").forEach((runner) => {
     const output = runner.querySelector(".command-output code");
     const meaning = runner.querySelector(".command-meaning");
-    runner.querySelectorAll(".command-line").forEach((button) => {
+    runner.querySelectorAll("button.command-line").forEach((button) => {
       button.addEventListener("click", () => {
         runner.querySelectorAll(".command-line").forEach((line) => {
           const active = line === button;
           line.classList.toggle("active", active);
           if (line.tagName === "BUTTON") line.setAttribute("aria-current", String(active));
+        });
+        output.textContent = button.dataset.output;
+        meaning.textContent = button.dataset.meaning;
+      });
+    });
+  });
+}
+
+function hydrateSceneCommands(root) {
+  root.querySelectorAll(".scene-command-panel").forEach((panel) => {
+    const output = panel.querySelector(".scene-command-result pre code");
+    const meaning = panel.querySelector(".scene-command-result p:last-child");
+    panel.querySelectorAll(".scene-command").forEach((button) => {
+      button.addEventListener("click", () => {
+        panel.querySelectorAll(".scene-command").forEach((node) => {
+          const active = node === button;
+          node.classList.toggle("active", active);
+          node.setAttribute("aria-current", String(active));
         });
         output.textContent = button.dataset.output;
         meaning.textContent = button.dataset.meaning;
@@ -1338,6 +1403,7 @@ async function initChapter() {
               <h2>${escapeHtml(detail.scenario.title)}</h2>
               <p>${escapeHtml(detail.scenario.body)}</p>
               ${renderPolicyNote(detail.policy)}
+              ${renderSceneVisual(chapter)}
               <div class="chapter-brief">
                 <div class="brief-item">
                   <strong>사용 파일</strong>
@@ -1390,6 +1456,7 @@ async function initChapter() {
     `;
     hydrateWorkspaceExplorer(root);
     hydrateCommandRunners(root);
+    hydrateSceneCommands(root);
   } catch (error) {
     root.innerHTML = `
       <section class="page-shell chapter-page">

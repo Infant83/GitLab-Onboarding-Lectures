@@ -291,6 +291,15 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 async function loadJson(path) {
   const response = await fetch(path);
   if (!response.ok) throw new Error(`${path} load failed`);
@@ -415,19 +424,36 @@ function renderChapters(chapters) {
   grid.innerHTML = "";
 
   chapters.forEach((chapter) => {
+    const visual = chapter.illustration;
+    const commandChips = visual?.commands?.slice(0, 3) || [];
     const article = document.createElement("article");
     article.className = "chapter-card";
     article.innerHTML = `
-      <div class="chapter-number">${chapter.number}</div>
-      <h3>${chapter.title}</h3>
-      <p>${chapter.focus}</p>
-      <div class="chapter-meta">
-        <p><strong>목표:</strong> <span>${chapter.objective || chapter.focus}</span></p>
-        <p><strong>실습:</strong> <span>${chapter.lab}</span></p>
-        <p><strong>완료:</strong> <span>${chapter.exitCheck || chapter.interaction}</span></p>
+      ${visual ? `
+        <figure class="chapter-card-visual">
+          <img src="${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}" loading="lazy" width="1536" height="1024">
+          <figcaption>${escapeHtml(visual.cue)}</figcaption>
+        </figure>
+      ` : ""}
+      <div class="chapter-card-head">
+        <div class="chapter-number">${escapeHtml(chapter.number)}</div>
+        <div>
+          <h3>${escapeHtml(chapter.title)}</h3>
+          <p>${escapeHtml(chapter.focus)}</p>
+        </div>
       </div>
+      <div class="chapter-meta">
+        <p><strong>목표:</strong> <span>${escapeHtml(chapter.objective || chapter.focus)}</span></p>
+        <p><strong>실습:</strong> <span>${escapeHtml(chapter.lab)}</span></p>
+        <p><strong>완료:</strong> <span>${escapeHtml(chapter.exitCheck || chapter.interaction)}</span></p>
+      </div>
+      ${commandChips.length ? `
+        <div class="chapter-command-chips" aria-label="이 챕터에서 먼저 확인할 명령어">
+          ${commandChips.map((command) => `<code>${escapeHtml(command)}</code>`).join("")}
+        </div>
+      ` : ""}
       <div class="chapter-links">
-        <a class="mini-link" href="${makeChapterLink(chapter.id)}" aria-label="${chapter.number} ${chapter.title} 챕터 열기">${chapter.number} 챕터 열기</a>
+        <a class="mini-link" href="${makeChapterLink(chapter.id)}" aria-label="${escapeHtml(chapter.number)} ${escapeHtml(chapter.title)} 챕터 열기">${escapeHtml(chapter.number)} 챕터 열기</a>
       </div>
     `;
     grid.appendChild(article);

@@ -8,6 +8,12 @@
     "lab": "환경 점검, 인증 방식 확인, seed repo 준비",
     "exitCheck": "origin, main, HEAD, working tree의 위치를 말할 수 있습니다.",
     "interaction": "저장소 지도와 역할 선택",
+    "illustration": {
+      "src": "assets/illustrations/ch01-course-foundation.webp",
+      "alt": "새 팀원이 실습 저장소 구조와 역할을 함께 확인하는 강의 장면",
+      "cue": "저장소 지도와 역할 확인",
+      "commands": ["git --version", "git remote -v", "git status"]
+    },
     "note": "CH01-Course-Foundation-and-Operating-Model_lecture-note.md",
     "pdf": "CH01-Course-Foundation-and-Operating-Model.pdf",
     "tutorial": "tutorials/CH01-Course-Foundation-and-Operating-Model/LAB.md"
@@ -21,6 +27,12 @@
     "lab": "clone, add, commit, push, fetch, pull",
     "exitCheck": "push 전 diff와 log를 확인하고 설명할 수 있습니다.",
     "interaction": "Git 상태 머신",
+    "illustration": {
+      "src": "assets/illustrations/ch02-local-workflow.webp",
+      "alt": "작은 파일 변경이 로컬 상태를 거쳐 원격으로 이동하는 실습 장면",
+      "cue": "변경 위치를 먼저 읽는 흐름",
+      "commands": ["git status --short", "git diff -- notes.txt", "git add notes.txt"]
+    },
     "note": "CH02-Local-Workflow-and-Core-Commands_lecture-note.md",
     "pdf": "CH02-Local-Workflow-and-Core-Commands.pdf",
     "tutorial": "tutorials/CH02-Local-Workflow-and-Core-Commands/LAB.md"
@@ -34,6 +46,12 @@
     "lab": "log, show, diff, stash, bisect, revert",
     "exitCheck": "reset과 revert의 차이를 팀 협업 기준으로 설명합니다.",
     "interaction": "commit graph 복구 실험",
+    "illustration": {
+      "src": "assets/illustrations/ch03-history-recovery.webp",
+      "alt": "commit 이력에서 문제 지점을 찾고 안전하게 되돌리는 장면",
+      "cue": "문제 commit을 찾고 revert로 복구",
+      "commands": ["git log --oneline --graph --decorate --all -12", "git show <commit-sha> --stat", "git revert <commit-sha>"]
+    },
     "note": "CH03-History-Inspection-and-Recovery_lecture-note.md",
     "pdf": "CH03-History-Inspection-and-Recovery.pdf",
     "tutorial": "tutorials/CH03-History-Inspection-and-Recovery/LAB.md"
@@ -47,6 +65,12 @@
     "lab": "feature branch, tracking branch, merge/rebase 비교",
     "exitCheck": "merge와 rebase 중 하나를 고르고 이유를 말합니다.",
     "interaction": "branch graph simulator",
+    "illustration": {
+      "src": "assets/illustrations/ch04-branch-sync.webp",
+      "alt": "갈라진 branch 흐름을 비교하고 동기화 방식을 고르는 장면",
+      "cue": "원격이 앞선 상황에서 비교 후 판단",
+      "commands": ["git fetch origin", "git log --oneline --left-right --graph HEAD...origin/main", "git pull --ff-only"]
+    },
     "note": "CH04-Branch-Strategy-and-Sync-Decisions_lecture-note.md",
     "pdf": "CH04-Branch-Strategy-and-Sync-Decisions.pdf",
     "tutorial": "tutorials/CH04-Branch-Strategy-and-Sync-Decisions/LAB.md"
@@ -60,6 +84,12 @@
     "lab": "MR template, CODEOWNERS, protected branch, approval",
     "exitCheck": "MR이 막힌 이유를 권한과 조건으로 나눠 설명합니다.",
     "interaction": "권한 매트릭스와 MR lifecycle",
+    "illustration": {
+      "src": "assets/illustrations/ch05-permissions-mr.webp",
+      "alt": "보호된 branch 앞에서 MR, 리뷰, merge 조건을 나누어 확인하는 장면",
+      "cue": "MR이 막힌 이유를 권한과 조건으로 분리",
+      "commands": ["git switch -c feature/ch05-mr-policy", "git push -u origin feature/ch05-mr-policy", "git status"]
+    },
     "note": "CH05-GitLab-Project-Structure-Permissions-and-MR_lecture-note.md",
     "pdf": "CH05-GitLab-Project-Structure-Permissions-and-MR.pdf",
     "tutorial": "tutorials/CH05-GitLab-Project-Structure-Permissions-and-MR/LAB.md"
@@ -73,6 +103,12 @@
     "lab": "동일 파일 병렬 수정, conflict 해결, rollback 토론",
     "exitCheck": "conflict marker를 지우고 최종 의도를 설명합니다.",
     "interaction": "conflict marker 해석기",
+    "illustration": {
+      "src": "assets/illustrations/ch06-conflict-rollback.webp",
+      "alt": "같은 문서를 고치다 생긴 충돌을 팀이 함께 해결하는 장면",
+      "cue": "충돌 marker를 읽고 최종 의도 결정",
+      "commands": ["git merge feature/process-update", "git status", "git grep \"<<<<<<<\""]
+    },
     "note": "CH06-Team-Collaboration-Conflict-and-Rollback-Lab_lecture-note.md",
     "pdf": "CH06-Team-Collaboration-Conflict-and-Rollback-Lab.pdf",
     "tutorial": "tutorials/CH06-Team-Collaboration-Conflict-and-Rollback-Lab/LAB.md"
@@ -86,6 +122,12 @@
     "lab": ".gitlab-ci.yml, job log, artifact, runner, protected variable",
     "exitCheck": "실패 로그에서 다음 담당자를 정합니다.",
     "interaction": "pipeline failure triage",
+    "illustration": {
+      "src": "assets/illustrations/ch07-cicd-quality-gates.webp",
+      "alt": "pipeline 실패를 코드 문제와 운영 문제로 나누어 점검하는 장면",
+      "cue": "실패 로그를 읽고 다음 담당자 결정",
+      "commands": ["python scripts/check_docs.py", "python scripts/smoke_check.py", "git status"]
+    },
     "note": "CH07-CICD-Quality-Gates-and-Self-Managed-Operations_lecture-note.md",
     "pdf": "CH07-CICD-Quality-Gates-and-Self-Managed-Operations.pdf",
     "tutorial": "tutorials/CH07-CICD-Quality-Gates-and-Self-Managed-Operations/LAB.md"
@@ -99,6 +141,12 @@
     "lab": "issue, branch, commit, MR, review, approval, merge, pipeline, rollback",
     "exitCheck": "우리 팀의 기본 GitLab 운영 규칙을 제안합니다.",
     "interaction": "release board와 role handoff",
+    "illustration": {
+      "src": "assets/illustrations/ch08-capstone-playbook.webp",
+      "alt": "issue부터 rollback까지 팀원이 역할별로 릴레이하는 종합 실습 장면",
+      "cue": "issue에서 rollback까지 한 번에 연결",
+      "commands": ["git switch -c feature/issue-101-sample-action", "python -m unittest discover -s tests", "git push -u origin feature/issue-101-sample-action"]
+    },
     "note": "CH08-Capstone-Scenario-and-Role-Based-Playbook_lecture-note.md",
     "pdf": "CH08-Capstone-Scenario-and-Role-Based-Playbook.pdf",
     "tutorial": "tutorials/CH08-Capstone-Scenario-and-Role-Based-Playbook/LAB.md"
