@@ -22,12 +22,19 @@
         <span>GitLab Onboarding</span>
       </a>
 
-      <nav class="nav-links" aria-label="주요 메뉴">
-        <a href="#route">목차</a>
-        <a href="#role-lab">역할별 수행시나리오</a>
-        <a href="#chapters">실습 챕터</a>
-        <a href="#takehome">핵심 정리</a>
-      </nav>
+      <div class="nav-actions">
+        <div class="profile-metrics header-metrics" data-public-metrics-widget data-state="loading" aria-label="사이트 방문 통계" aria-live="polite">
+          <span class="profile-metrics-pill"><strong data-metric-field="page">-</strong> views</span>
+          <span class="profile-metrics-pill">avg <strong data-metric-field="average">-</strong></span>
+        </div>
+
+        <nav class="nav-links" aria-label="주요 메뉴">
+          <a href="#route">목차</a>
+          <a href="#role-lab">역할별 수행시나리오</a>
+          <a href="#chapters">실습 챕터</a>
+          <a href="#takehome">핵심 정리</a>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -192,12 +199,191 @@
   <footer class="page-shell footer">
     <span>GitLab Onboarding Interactive</span>
     <span>
-      작성자: Infant83 ·
-      <a href="https://github.com/Infant83" target="_blank" rel="noreferrer">GitHub</a> ·
-      <a href="https://infant83.github.io/" target="_blank" rel="noreferrer">infant83.github.io</a>
+      작성자:
+      <a href="https://infant83.github.io/" target="_blank" rel="noreferrer">Infant83</a> ·
+      <a href="https://github.com/Infant83/GitLab-Onboarding-Lectures" target="_blank" rel="noreferrer">GitHub</a>
     </span>
   </footer>
 
+  <script>
+    (function () {
+      const endpoint = "https://infant83-public-metrics.infant83.workers.dev";
+      const site = "gitlab-lectures";
+      const basePath = "/GitLab-Onboarding-Lectures/";
+      const widget = document.querySelector("[data-public-metrics-widget]");
+      const isHttp = location.protocol === "https:" || location.protocol === "http:";
+      const shouldRecord = location.origin === "https://infant83.github.io";
+
+      if (!widget || !isHttp) {
+        return;
+      }
+
+      const pagePath = canonicalPath(location.pathname);
+      if (!pagePath.startsWith(basePath)) {
+        return;
+      }
+
+      widget.dataset.state = "loading";
+      const summaryPromise = shouldRecord ? sendHitOnce().then(loadSummary) : loadSummary();
+      summaryPromise
+        .then(renderMetrics)
+        .catch(function () {
+          widget.dataset.state = "error";
+        });
+
+      if (shouldRecord) {
+        startEngagementTracking();
+      }
+
+      function canonicalPath(rawPath) {
+        let path = String(rawPath || "").trim();
+        if (/^https?:\/\//i.test(path)) {
+          try {
+            path = new URL(path).pathname;
+          } catch {
+            return basePath;
+          }
+        }
+        if (!path || path === "/" || path === "/index.html") {
+          return basePath;
+        }
+        if (!path.startsWith("/")) {
+          path = "/" + path;
+        }
+        if (path === "/GitLab-Onboarding-Lectures" || path === "/GitLab-Onboarding-Lectures/index.html") {
+          return basePath;
+        }
+        return path.replace(/\/index\.html$/i, "/");
+      }
+
+      async function sendHitOnce() {
+        const key = "gitlab-lectures-hit:" + pagePath;
+        try {
+          if (sessionStorage.getItem(key)) {
+            return;
+          }
+          sessionStorage.setItem(key, "1");
+        } catch {
+          // Privacy modes may block sessionStorage; the page load can still be counted.
+        }
+        await postJson("/hit", { path: pagePath });
+      }
+
+      async function loadSummary() {
+        const url = new URL(endpoint + "/summary");
+        url.searchParams.append("site", site);
+        url.searchParams.append("path", pagePath);
+        const response = await fetch(url.toString(), { method: "GET", mode: "cors", cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("metrics_summary_failed");
+        }
+        return response.json();
+      }
+
+      async function postJson(route, payload, keepalive) {
+        const response = await fetch(endpoint + route, {
+          method: "POST",
+          mode: "cors",
+          cache: "no-store",
+          keepalive: Boolean(keepalive),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error("metrics_post_failed");
+        }
+        return response.json();
+      }
+
+      function renderMetrics(summary) {
+        const page = (summary.pages || {})[pagePath] || {};
+        widget.dataset.state = "ready";
+        setText("page", formatNumber(page.views || 0));
+        setText("average", formatDuration(page.averageActiveSeconds || 0));
+      }
+
+      function setText(field, value) {
+        const target = widget.querySelector('[data-metric-field="' + field + '"]');
+        if (target) {
+          target.textContent = value;
+        }
+      }
+
+      function startEngagementTracking() {
+        let lastTick = performance.now();
+        let activeMs = 0;
+        let maxScrollPercent = getScrollPercent();
+
+        const tick = function () {
+          const now = performance.now();
+          if (document.visibilityState === "visible") {
+            activeMs += now - lastTick;
+          }
+          lastTick = now;
+          maxScrollPercent = Math.max(maxScrollPercent, getScrollPercent());
+        };
+
+        const flush = function (keepalive) {
+          tick();
+          const activeSeconds = Math.floor(activeMs / 1000);
+          const scroll = Math.round(maxScrollPercent);
+          if (activeSeconds < 5 && scroll < 25) {
+            return;
+          }
+          activeMs = 0;
+          maxScrollPercent = getScrollPercent();
+
+          const payload = { path: pagePath, activeSeconds, maxScrollPercent: scroll };
+          if (keepalive && navigator.sendBeacon) {
+            const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+            navigator.sendBeacon(endpoint + "/engagement", blob);
+            return;
+          }
+          postJson("/engagement", payload, keepalive).catch(function () {});
+        };
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "hidden") {
+            flush(true);
+          } else {
+            lastTick = performance.now();
+          }
+        });
+        window.addEventListener("pagehide", function () { flush(true); });
+        window.addEventListener("scroll", function () {
+          maxScrollPercent = Math.max(maxScrollPercent, getScrollPercent());
+        }, { passive: true });
+        window.setInterval(function () { flush(false); }, 15000);
+      }
+
+      function getScrollPercent() {
+        const doc = document.documentElement;
+        const body = document.body;
+        const scrollTop = window.scrollY || doc.scrollTop || body.scrollTop || 0;
+        const scrollHeight = Math.max(body.scrollHeight, doc.scrollHeight);
+        const viewport = window.innerHeight || doc.clientHeight || 0;
+        if (scrollHeight <= viewport) {
+          return 100;
+        }
+        return Math.min(100, Math.max(0, ((scrollTop + viewport) / scrollHeight) * 100));
+      }
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat("en-US").format(Number(value || 0));
+      }
+
+      function formatDuration(seconds) {
+        const value = Number(seconds || 0);
+        if (value <= 0) {
+          return "-";
+        }
+        if (value < 60) {
+          return value + "s";
+        }
+        return Math.round(value / 60) + " min";
+      }
+    })();
+  </script>
   <script type="module" src="assets/app.js"></script>
 </body>
 </html>
