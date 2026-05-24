@@ -1301,6 +1301,7 @@ select {
 }
 
 .command-line code,
+.command-input code,
 .command-output code {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
@@ -1318,17 +1319,27 @@ select {
   font-size: 0.72rem;
 }
 
+.command-input,
 .command-output {
-  max-height: 10rem;
   margin: 0 0 0.7rem;
   overflow: auto;
   border: 1px solid rgba(49, 75, 66, 0.14);
   border-radius: var(--radius);
-  background: #24352f;
-  color: #f6f0e5;
   padding: 0.65rem;
   font-size: 0.8rem;
   line-height: 1.5;
+}
+
+.command-input {
+  max-height: 6.8rem;
+  background: rgba(31, 45, 40, 0.07);
+  color: #1f2d28;
+}
+
+.command-output {
+  max-height: 9rem;
+  background: #24352f;
+  color: #f6f0e5;
 }
 
 .command-meaning {
@@ -1336,6 +1347,56 @@ select {
   color: var(--muted);
   font-size: 0.88rem;
   word-break: keep-all;
+}
+
+.command-preview {
+  margin-top: 0.65rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.6rem;
+}
+
+.command-preview.is-hidden {
+  display: none;
+}
+
+.command-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.command-preview-head span {
+  color: var(--accent-warm);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.command-preview-head strong {
+  color: var(--text);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.command-preview pre {
+  max-height: 11rem;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid rgba(49, 75, 66, 0.14);
+  border-radius: var(--radius);
+  background: rgba(31, 45, 40, 0.07);
+  color: #1f2d28;
+  padding: 0.62rem;
+  font-size: 0.78rem;
+  line-height: 1.48;
+}
+
+.command-preview code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 .action-card {

@@ -1,6 +1,6 @@
 # GitLab Onboarding Learning Audit Log
 
-검토일: 2026-05-23
+검토일: 2026-05-24
 
 ## Loop 1. 학습 흐름과 문체
 
@@ -19,7 +19,14 @@
 - 팀 릴레이 UI를 추가해 issue, branch, review, pipeline, merge, rollback 단계에서 현재 역할이 해야 할 일을 바꾸어 보여준다.
 - 권한 실험 결과에 확인 위치, 다음 담당, 조건을 추가했다.
 - CH01의 bootstrap 예외, CH07 deploy stage, CH08 lecture asset 복사 경로를 실제 실행 가능한 흐름으로 보완했다.
-- PowerShell 학습자가 막히기 쉬운 `printf`, `cat`, `cp`, `mkdir -p` 명령에는 대체 실행 방식을 함께 설명했다.
+- 로컬 실습 명령은 Windows PowerShell 기준으로 통일했다.
+
+## Loop 4. 명령 UI와 Windows 실습 기준
+
+- `cat <<EOF`, `printf`, `cp`, `mkdir -p`처럼 Unix shell을 전제한 로컬 명령을 제거했다.
+- 파일을 쓰는 명령은 `Set-Content`, 이어 붙이는 명령은 `Add-Content`, 복사는 `Copy-Item`, 폴더 생성은 `New-Item -ItemType Directory -Force`로 정리했다.
+- 여러 줄 파일 본문은 명령 목록에 쪼개서 노출하지 않고, 선택한 명령의 오른쪽 미리보기에서만 확인하도록 바꿨다.
+- CH07의 Pages job은 GitLab runner 안에서도 shell 의존이 줄어들도록 Python 한 줄 명령으로 `public` 폴더를 만든다.
 
 ## 남은 운영 메모
 

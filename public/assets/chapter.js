@@ -100,7 +100,7 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/ch02-basic-cycle",
-          "printf \"training journal\\n\" > notes.txt",
+          "Set-Content -Path notes.txt -Value \"training journal\" -Encoding UTF8",
           "git status --short",
           "git diff -- notes.txt"
         ],
@@ -114,8 +114,8 @@ const chapterDetails = {
           "git add notes.txt",
           "git diff --staged",
           "git commit -m \"docs: add training journal note\"",
-          "mkdir -p docs",
-          "printf \"# Tutorial guide\\n\\n- read status before commit\\n\" > docs/tutorial-guide.md",
+          "New-Item -ItemType Directory -Force -Path docs",
+          "Set-Content -Path docs/tutorial-guide.md -Value @(\"# Tutorial guide\", \"\", \"- read status before commit\") -Encoding UTF8",
           "git add docs/tutorial-guide.md",
           "git diff --staged",
           "git restore --staged docs/tutorial-guide.md",
@@ -187,17 +187,9 @@ const chapterDetails = {
         story: "테스트를 추가하고 정상 commit을 만든 뒤, 같은 파일에 문제를 넣습니다. history inspection은 이 차이를 읽는 연습입니다.",
         commands: [
           "git switch -c feature/ch03-history-lab",
-          "mkdir -p tests docs",
-          "printf \"# Release notes draft\\n\" > docs/release-notes-draft.md",
-          "cat > tests/test_role_policy.py <<'PY'",
-          "import unittest",
-          "from src.permissions import can_use_sample_action",
-          "",
-          "class RolePolicyTest(unittest.TestCase):",
-          "    def test_owner_and_maintainer_allowed(self):",
-          "        self.assertTrue(can_use_sample_action('Owner'))",
-          "        self.assertTrue(can_use_sample_action('Maintainer'))",
-          "PY",
+          "New-Item -ItemType Directory -Force -Path tests, docs",
+          "Set-Content -Path docs/release-notes-draft.md -Value \"# Release notes draft\" -Encoding UTF8",
+          "Set-Content -Path tests/test_role_policy.py -Value @(\"import unittest\", \"from src.permissions import can_use_sample_action\", \"\", \"class RolePolicyTest(unittest.TestCase):\", \"    def test_owner_and_maintainer_allowed(self):\", \"        self.assertTrue(can_use_sample_action('Owner'))\", \"        self.assertTrue(can_use_sample_action('Maintainer'))\") -Encoding UTF8",
           "git add docs/release-notes-draft.md tests/test_role_policy.py",
           "git commit -m \"test: add role policy coverage\"",
           "python -m unittest discover -s tests"
@@ -260,8 +252,8 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/branch-playbook",
-          "mkdir -p docs",
-          "printf \"# Branch planning\\n\\n- keep branches short\\n\" > docs/branch-planning.md",
+          "New-Item -ItemType Directory -Force -Path docs",
+          "Set-Content -Path docs/branch-planning.md -Value @(\"# Branch planning\", \"\", \"- keep branches short\") -Encoding UTF8",
           "git add docs/branch-planning.md",
           "git commit -m \"docs: add branch planning note\"",
           "git push -u origin feature/branch-playbook",
@@ -277,14 +269,8 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/feature-flags",
-          "mkdir -p src",
-          "cat > docs/feature-flags.md <<'MD'",
-          "# Feature Flags",
-          "",
-          "| Flag | Default | Owner |",
-          "| --- | --- | --- |",
-          "| sample_action | off | Maintainer |",
-          "MD",
+          "New-Item -ItemType Directory -Force -Path src",
+          "Set-Content -Path docs/feature-flags.md -Value @(\"# Feature Flags\", \"\", \"| Flag | Default | Owner |\", \"| --- | --- | --- |\", \"| sample_action | off | Maintainer |\") -Encoding UTF8",
           "git add docs/feature-flags.md",
           "git commit -m \"docs: add feature flag baseline\"",
           "git push -u origin feature/feature-flags"
@@ -347,9 +333,9 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/mr-standards",
-          "mkdir -p .gitlab/merge_request_templates docs",
-          "printf \"## 변경 이유\\n\\n## 테스트\\n\\n## Rollback 기준\\n\" > .gitlab/merge_request_templates/standard.md",
-          "printf \"# Review checklist\\n\\n- diff\\n- tests\\n- rollback\\n\" > docs/review-checklist.md",
+          "New-Item -ItemType Directory -Force -Path .gitlab/merge_request_templates, docs",
+          "Set-Content -Path .gitlab/merge_request_templates/standard.md -Value @(\"## 변경 이유\", \"\", \"## 테스트\", \"\", \"## Rollback 기준\") -Encoding UTF8",
+          "Set-Content -Path docs/review-checklist.md -Value @(\"# Review checklist\", \"\", \"- diff\", \"- tests\", \"- rollback\") -Encoding UTF8",
           "git add .gitlab docs/review-checklist.md",
           "git commit -m \"docs: add merge request standards\"",
           "git push -u origin feature/mr-standards"
@@ -361,7 +347,7 @@ const chapterDetails = {
         title: "CODEOWNERS로 리뷰 호출 기준을 만듭니다",
         story: "CODEOWNERS는 사람을 자동으로 부르는 장치입니다. 승인 규칙과 연결하면 특정 경로의 변경은 지정된 사람이 봅니다.",
         commands: [
-          "printf \"docs/ @docs-reviewer\\nsrc/ @app-maintainer\\ntests/ @qa-reviewer\\n\" > CODEOWNERS",
+          "Set-Content -Path CODEOWNERS -Value @(\"docs/ @docs-reviewer\", \"src/ @app-maintainer\", \"tests/ @qa-reviewer\") -Encoding UTF8",
           "git add CODEOWNERS",
           "git commit -m \"docs: define code owners for training paths\"",
           "git push"
@@ -419,8 +405,8 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/process-a",
-          "cp variants/process-a-rewrite.md docs/process.md",
-          "cp variants/page-a.html public/index.html",
+          "Copy-Item -Path variants/process-a-rewrite.md -Destination docs/process.md",
+          "Copy-Item -Path variants/page-a.html -Destination public/index.html",
           "git diff -- docs/process.md public/index.html",
           "git add docs/process.md public/index.html",
           "git commit -m \"docs: revise process for reviewer handoff\"",
@@ -436,8 +422,8 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/process-b",
-          "cp variants/process-b-rewrite.md docs/process.md",
-          "cp variants/page-b.html public/index.html",
+          "Copy-Item -Path variants/process-b-rewrite.md -Destination docs/process.md",
+          "Copy-Item -Path variants/page-b.html -Destination public/index.html",
           "git add docs/process.md public/index.html",
           "git commit -m \"docs: revise process for maintainer handoff\"",
           "git push -u origin feature/process-b"
@@ -513,21 +499,7 @@ const chapterDetails = {
         title: ".gitlab-ci.yml에 stage와 job을 씁니다",
         story: "stage는 순서, job은 실제 작업 단위입니다. 각 job은 실패했을 때 담당자가 달라질 수 있습니다.",
         commands: [
-          "cat > .gitlab-ci.yml <<'YAML'",
-          "stages: [test, build, smoke, deploy]",
-          "test:",
-          "  image: python:3.12",
-          "  script:",
-          "    - python -m unittest discover -s tests",
-          "build:",
-          "  image: python:3.12",
-          "  script:",
-          "    - python scripts/check_docs.py",
-          "smoke:",
-          "  image: python:3.12",
-          "  script:",
-          "    - python scripts/smoke_check.py",
-          "YAML"
+          "Set-Content -Path .gitlab-ci.yml -Value @(\"stages: [test, build, smoke, deploy]\", \"test:\", \"  image: python:3.12\", \"  script:\", \"    - python -m unittest discover -s tests\", \"build:\", \"  image: python:3.12\", \"  script:\", \"    - python scripts/check_docs.py\", \"smoke:\", \"  image: python:3.12\", \"  script:\", \"    - python scripts/smoke_check.py\") -Encoding UTF8"
         ],
         gitlab: ["CI/CD > Pipelines에서 stage 순서 확인", "각 job log에서 script 줄과 실패 줄 확인"],
         check: ["stage 실패가 뒤 stage를 막는다는 점 설명", "첫 번째 유의미 에러와 마지막 요약 에러를 구분"]
@@ -549,17 +521,7 @@ const chapterDetails = {
         title: "Pages와 self-managed 운영 제약을 짧게 비교합니다",
         story: "정적 문서를 Pages로 게시한다고 가정하면 artifact 경로와 branch rule이 중요합니다. self-managed에서는 runner와 image 정책도 같이 봅니다.",
         commands: [
-          "cat >> .gitlab-ci.yml <<'YAML'",
-          "pages:",
-          "  stage: deploy",
-          "  script:",
-          "    - mkdir -p public",
-          "  artifacts:",
-          "    paths:",
-          "      - public",
-          "  rules:",
-          "    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'",
-          "YAML"
+          "Add-Content -Path .gitlab-ci.yml -Value @('pages:', '  stage: deploy', '  script:', '    - python -c \"from pathlib import Path; Path(''public'').mkdir(exist_ok=True)\"', '  artifacts:', '    paths:', '      - public', '  rules:', '    - if: ''$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH''') -Encoding UTF8"
         ],
         gitlab: ["Settings > CI/CD에서 runner 상태 확인", "Settings > CI/CD > Variables에서 protected variable 여부 확인", "Deploy > Pages가 보이는 환경인지 확인"],
         check: ["pipeline 실패를 merge 권한 문제와 분리", "protected variable은 protected branch/tag 조건과 연결된다는 점 확인"]
@@ -592,14 +554,8 @@ const chapterDetails = {
           "git switch main",
           "git pull --ff-only",
           "git switch -c feature/issue-101-sample-action",
-          "mkdir -p issues",
-          "cat > issues/ISSUE-101-sample-action.md <<'MD'",
-          "# ISSUE-101 Sample action visibility",
-          "",
-          "- Reporter confirms the button should be visible only to Maintainer and Owner.",
-          "- Developer updates src/sample_action.py and tests/test_sample_action.py.",
-          "- Reviewer checks test output and rollback trigger.",
-          "MD",
+          "New-Item -ItemType Directory -Force -Path issues",
+          "Set-Content -Path issues/ISSUE-101-sample-action.md -Value @(\"# ISSUE-101 Sample action visibility\", \"\", \"- Reporter confirms the button should be visible only to Maintainer and Owner.\", \"- Developer updates src/sample_action.py and tests/test_sample_action.py.\", \"- Reviewer checks test output and rollback trigger.\") -Encoding UTF8",
           "git status --short"
         ],
         gitlab: ["Issues에서 요구사항, 담당자, label, milestone 확인", "MR 생성 전 branch 이름에 issue 번호가 보이는지 확인"],
@@ -609,21 +565,9 @@ const chapterDetails = {
         title: "기능과 테스트를 작은 commit으로 연결합니다",
         story: "구현 파일과 테스트 파일은 같은 MR 안에서 서로를 설명합니다. 기능 flag와 app 연결부까지 함께 확인합니다.",
         commands: [
-          "mkdir -p src tests",
-          "cat > src/sample_action.py <<'PY'",
-          "def visible_to(role):",
-          "    return role in {\"Maintainer\", \"Owner\"}",
-          "PY",
-          "cat > tests/test_sample_action.py <<'PY'",
-          "import unittest",
-          "from src.sample_action import visible_to",
-          "",
-          "class SampleActionTest(unittest.TestCase):",
-          "    def test_visible_to_operator_roles(self):",
-          "        self.assertTrue(visible_to(\"Maintainer\"))",
-          "        self.assertTrue(visible_to(\"Owner\"))",
-          "        self.assertFalse(visible_to(\"Reporter\"))",
-          "PY",
+          "New-Item -ItemType Directory -Force -Path src, tests",
+          "Set-Content -Path src/sample_action.py -Value @(\"def visible_to(role):\", \"    return role in {'Maintainer', 'Owner'}\") -Encoding UTF8",
+          "Set-Content -Path tests/test_sample_action.py -Value @(\"import unittest\", \"from src.sample_action import visible_to\", \"\", \"class SampleActionTest(unittest.TestCase):\", \"    def test_visible_to_operator_roles(self):\", \"        self.assertTrue(visible_to('Maintainer'))\", \"        self.assertTrue(visible_to('Owner'))\", \"        self.assertFalse(visible_to('Reporter'))\") -Encoding UTF8",
           "git diff -- src/sample_action.py tests/test_sample_action.py",
           "git add src/sample_action.py tests/test_sample_action.py",
           "git commit -m \"feat: add sample action\"",
@@ -636,14 +580,8 @@ const chapterDetails = {
         title: "MR template에 운영 판단 재료를 채웁니다",
         story: "capstone MR은 코드만 올리지 않습니다. 리뷰어가 판단할 수 있도록 변경 이유, 테스트, rollback 기준을 채웁니다.",
         commands: [
-          "mkdir -p docs",
-          "cat > docs/release-decision-log.md <<'MD'",
-          "# Release Decision Log",
-          "",
-          "- approval complete",
-          "- pipeline passed",
-          "- rollback trigger: wrong role visibility",
-          "MD",
+          "New-Item -ItemType Directory -Force -Path docs",
+          "Set-Content -Path docs/release-decision-log.md -Value @(\"# Release Decision Log\", \"\", \"- approval complete\", \"- pipeline passed\", \"- rollback trigger: wrong role visibility\") -Encoding UTF8",
           "git add docs/release-decision-log.md public/index.html docs/feature-flags.md",
           "git commit -m \"docs: record release decision for sample action\"",
           "git push -u origin feature/issue-101-sample-action"
@@ -1128,18 +1066,15 @@ function commandGuide(command) {
     [/^python -m unittest discover -s tests$/, "Ran 2 tests in 0.001s\n\nOK", "Python 표준 테스트를 실행합니다. tests 폴더 아래의 테스트 파일을 찾아 역할 규칙을 확인합니다."],
     [/^python scripts\/check_docs\.py$/, "docs check passed", "Markdown과 HTML 파일이 실습 기준을 만족하는지 확인합니다."],
     [/^python scripts\/smoke_check\.py$/, "smoke check passed", "전체 테스트보다 가벼운 운영 전제 확인입니다. 문서 구조나 feature flag 문구 같은 조건을 빠르게 봅니다."],
-    [/^mkdir -p /, "directory ready", "필요한 폴더가 없으면 만들고, 이미 있으면 그대로 둡니다. PowerShell에서는 New-Item -ItemType Directory -Force <path>로 바꿀 수 있습니다."],
-    [/^printf /, "file content written", "실습용 문구를 파일에 씁니다. PowerShell에서는 Set-Content 또는 @' ... '@ | Set-Content <file> 형식으로 바꿉니다."],
-    [/^cp /, "file copied", "강의 자산을 실습 저장소의 대상 경로로 복사합니다. PowerShell에서는 Copy-Item <source> <target>을 씁니다."],
-    [/^cat >|^cat >>/, "입력 블록을 파일에 기록합니다.", "here-document로 여러 줄 파일을 한 번에 만듭니다. PowerShell에서는 @' ... '@ | Set-Content <file> 또는 Add-Content로 바꿉니다."]
+    [/^New-Item -ItemType Directory -Force -Path /, "Directory: 실습 폴더가 준비되었습니다.", "PowerShell에서 폴더를 만듭니다. -Force가 있어 같은 폴더가 이미 있어도 실습 흐름이 멈추지 않습니다."],
+    [/^Set-Content -Path /, "파일을 UTF-8로 저장했습니다.", "PowerShell에서 파일 내용을 새로 씁니다. 같은 경로가 이미 있으면 이전 내용은 이 명령의 내용으로 바뀝니다."],
+    [/^Add-Content -Path /, "파일 끝에 내용을 추가했습니다.", "PowerShell에서 기존 파일 뒤에 줄을 이어 붙입니다. CH07에서는 기본 CI 설정 뒤에 Pages 배포 job만 추가합니다."],
+    [/^Copy-Item -Path /, "file copied", "실습 변형 파일을 실제 작업 파일 위치로 복사합니다. 비교용 문서와 HTML을 MR에서 한 번에 검토할 수 있게 합니다."]
   ];
 
   const found = guides.find(([pattern]) => pattern.test(text));
   if (found) return { output: found[1], meaning: found[2] };
   if (text.startsWith("#")) return { output: "터미널에 실행하지 않는 설명 줄입니다.", meaning: "강사가 편집 지점을 알려주기 위해 넣은 주석입니다." };
-  if (/^[A-Za-z0-9_.-]+:/.test(text) || text.startsWith("  ") || text === "YAML") {
-    return { output: "파일에 들어가는 내용입니다.", meaning: "앞의 cat 명령과 함께 쓰는 설정 본문입니다. 터미널 명령이 아니라 파일 내용으로 읽습니다." };
-  }
   return {
     output: "명령이 정상 실행되면 다음 상태로 넘어갑니다.",
     meaning: "이 줄은 실습 흐름 안에서 상태를 바꾸는 명령입니다. 실행 전후로 status, diff, GitLab 화면을 함께 확인합니다."
@@ -1149,14 +1084,68 @@ function commandGuide(command) {
 function commandKind(command) {
   const text = command.trim();
   if (text.startsWith("#")) return "note";
-  if (/^[A-Za-z0-9_.-]+:/.test(text) || text.startsWith("  ") || text === "YAML" || text === "PY" || text === "MD" || text === "") return "file";
   return "command";
+}
+
+function decodePowerShellLiteral(raw, quote) {
+  if (quote === "'") return raw.replace(/''/g, "'");
+  return raw.replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+}
+
+function parsePowerShellValue(raw) {
+  const value = raw.trim();
+  const arrayMatch = value.match(/^@\(([\s\S]*)\)$/);
+  const body = arrayMatch ? arrayMatch[1] : value;
+  const lines = [];
+  const tokenPattern = /"((?:\\.|[^"\\])*)"|'((?:''|[^'])*)'/g;
+  let match;
+  while ((match = tokenPattern.exec(body)) !== null) {
+    if (match[1] !== undefined) {
+      lines.push(decodePowerShellLiteral(match[1], '"'));
+    } else {
+      lines.push(decodePowerShellLiteral(match[2], "'"));
+    }
+  }
+  return lines.join("\n");
+}
+
+function fileWriteInfo(command) {
+  const text = command.trim();
+  const actionMatch = text.match(/^(Set-Content|Add-Content)\s+-Path\s+(\S+)\s+-Value\s+([\s\S]+?)(?:\s+-Encoding\s+\S+)?$/);
+  if (!actionMatch) return null;
+  const [, action, path, rawValue] = actionMatch;
+  return {
+    path,
+    mode: action === "Add-Content" ? "append" : "write",
+    content: parsePowerShellValue(rawValue)
+  };
+}
+
+function commandLabel(command) {
+  const writeInfo = fileWriteInfo(command);
+  if (!writeInfo) return command;
+  return `${writeInfo.mode === "append" ? "파일 추가" : "파일 작성"}: ${writeInfo.path}`;
+}
+
+function renderCommandPreview(writeInfo) {
+  const hidden = writeInfo ? "" : " is-hidden";
+  const label = writeInfo?.mode === "append" ? "추가될 파일 미리보기" : "작성될 파일 미리보기";
+  return `
+    <div class="command-preview${hidden}">
+      <div class="command-preview-head">
+        <span>${label}</span>
+        <strong data-preview-path>${escapeHtml(writeInfo?.path || "")}</strong>
+      </div>
+      <pre><code data-preview-content>${escapeHtml(writeInfo?.content || "")}</code></pre>
+    </div>
+  `;
 }
 
 function renderCommandRunner(commands, stepIndex) {
   if (!commands || commands.length === 0) return "";
   const firstCommand = commands.find((command) => commandKind(command) === "command") || commands[0];
   const firstGuide = commandGuide(firstCommand);
+  const firstWriteInfo = fileWriteInfo(firstCommand);
   return `
     <div class="command-runner" data-step-index="${stepIndex}">
       <div class="command-list" aria-label="명령어 선택">
@@ -1166,27 +1155,34 @@ function renderCommandRunner(commands, stepIndex) {
           if (kind !== "command") {
             return `
               <div class="command-line command-line-static kind-${kind}">
-                <span>${kind === "file" ? "파일 내용" : "설명"}</span>
+                <span>강의 메모</span>
                 <code>${escapeHtml(command || "빈 줄")}</code>
               </div>
             `;
           }
+          const writeInfo = fileWriteInfo(command);
           return `
             <button class="command-line ${command === firstCommand ? "active" : ""}" type="button"
               data-command="${escapeHtml(command)}"
               data-output="${escapeHtml(guide.output)}"
               data-meaning="${escapeHtml(guide.meaning)}"
+              data-preview-path="${escapeHtml(writeInfo?.path || "")}"
+              data-preview-mode="${escapeHtml(writeInfo?.mode || "")}"
+              data-preview-content="${escapeHtml(writeInfo?.content || "")}"
               aria-current="${command === firstCommand ? "true" : "false"}">
-              <code>${escapeHtml(command)}</code>
+              <code>${escapeHtml(commandLabel(command))}</code>
             </button>
           `;
         })}
       </div>
       <div class="command-detail" aria-live="polite">
+        <p class="section-label">PowerShell 명령</p>
+        <pre class="command-input"><code>${escapeHtml(firstCommand)}</code></pre>
         <p class="section-label">예상 출력</p>
         <pre class="command-output"><code>${escapeHtml(firstGuide.output)}</code></pre>
         <p class="section-label">이 명령의 의미</p>
         <p class="command-meaning">${escapeHtml(firstGuide.meaning)}</p>
+        ${renderCommandPreview(firstWriteInfo)}
       </div>
     </div>
   `;
@@ -1339,8 +1335,13 @@ function hydrateWorkspaceExplorer(root) {
 
 function hydrateCommandRunners(root) {
   root.querySelectorAll(".command-runner").forEach((runner) => {
+    const input = runner.querySelector(".command-input code");
     const output = runner.querySelector(".command-output code");
     const meaning = runner.querySelector(".command-meaning");
+    const preview = runner.querySelector(".command-preview");
+    const previewLabel = preview?.querySelector(".command-preview-head span");
+    const previewPath = preview?.querySelector("[data-preview-path]");
+    const previewContent = preview?.querySelector("[data-preview-content]");
     runner.querySelectorAll("button.command-line").forEach((button) => {
       button.addEventListener("click", () => {
         runner.querySelectorAll(".command-line").forEach((line) => {
@@ -1366,8 +1367,16 @@ function hydrateSceneCommands(root) {
           node.classList.toggle("active", active);
           node.setAttribute("aria-current", String(active));
         });
+        input.textContent = button.dataset.command;
         output.textContent = button.dataset.output;
         meaning.textContent = button.dataset.meaning;
+        if (preview && previewLabel && previewPath && previewContent) {
+          const hasPreview = Boolean(button.dataset.previewPath);
+          preview.classList.toggle("is-hidden", !hasPreview);
+          previewLabel.textContent = button.dataset.previewMode === "append" ? "추가될 파일 미리보기" : "작성될 파일 미리보기";
+          previewPath.textContent = button.dataset.previewPath || "";
+          previewContent.textContent = button.dataset.previewContent || "";
+        }
       });
     });
   });
