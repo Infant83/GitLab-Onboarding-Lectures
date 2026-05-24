@@ -2,4 +2,6 @@
 desktop.ini
 Thumbs.db
 .playwright-mcp
+.playwright-cli/
 output/
+GitLab-Onboarding-Lectures/slide_output/
