@@ -906,7 +906,7 @@ select {
 }
 
 .chapter-page {
-  padding: clamp(2rem, 4vw, 3.4rem) 0 0;
+  padding: clamp(2rem, 4vw, 3.4rem) 0 clamp(2rem, 4vw, 3rem);
 }
 
 .chapter-hero {
