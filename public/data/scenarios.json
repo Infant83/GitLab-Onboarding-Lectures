@@ -149,7 +149,7 @@
       {
         "label": "무조건 --force로 다시 push합니다.",
         "tone": "risky",
-        "feedback": "개인 branch에서도 조심해야 합니다. 공유 branch라면 다른 사람의 commit을 숨길 수 있습니다."
+        "feedback": "개인 branch에서도 조심합니다. 공유 branch라면 다른 사람의 commit을 숨길 수 있습니다."
       }
     ]
   },
@@ -171,7 +171,7 @@
       {
         "label": "pipeline이 통과하면 문장은 나중에 고칩니다.",
         "tone": "risky",
-        "feedback": "문서나 HTML의 의미 conflict는 테스트가 잡지 못할 수 있습니다. 리뷰에서 사람이 확인해야 합니다."
+        "feedback": "문서나 HTML의 의미 conflict는 테스트가 놓칠 수 있습니다. 리뷰에서 사람이 최종 문장을 읽습니다."
       }
     ]
   },

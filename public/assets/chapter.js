@@ -433,7 +433,7 @@ const chapterDetails = {
       },
       {
         title: "conflict marker를 읽고 해결합니다",
-        story: "marker는 Git이 포기한 지점입니다. 사람이 최종 의도를 다시 작성해야 합니다.",
+        story: "marker는 Git이 멈춘 지점입니다. 사람이 최종 의도를 다시 씁니다.",
         commands: [
           "git fetch origin",
           "git switch feature/process-b",
@@ -463,7 +463,7 @@ const chapterDetails = {
       }
     ],
     takehome: "conflict 해결은 한쪽 선택이 아니라 최종 파일의 의미를 다시 쓰는 일입니다.",
-    recap: ["marker를 지우는 것만으로 해결이 끝나지 않습니다.", "해결 뒤 test와 리뷰를 다시 통과해야 합니다.", "문제가 merge 뒤 발견되면 revert와 hotfix 판단이 필요합니다."],
+    recap: ["marker를 지우는 것만으로 해결이 끝나지 않습니다.", "해결 뒤 test와 리뷰를 다시 통과합니다.", "문제가 merge 뒤 발견되면 revert와 hotfix를 나눠 봅니다."],
     sources: [officialSources.mrAuth, officialSources.approvals]
   },
   ch07: {
@@ -519,7 +519,7 @@ const chapterDetails = {
       },
       {
         title: "Pages와 self-managed 운영 제약을 짧게 비교합니다",
-        story: "정적 문서를 Pages로 게시한다고 가정하면 artifact 경로와 branch rule이 중요합니다. self-managed에서는 runner와 image 정책도 같이 봅니다.",
+        story: "정적 문서를 Pages로 게시한다고 가정하면 artifact 경로와 branch rule부터 봅니다. self-managed에서는 runner와 image 정책도 같이 확인합니다.",
         commands: [
           "Add-Content -Path .gitlab-ci.yml -Value @('pages:', '  stage: deploy', '  script:', '    - python -c \"from pathlib import Path; Path(''public'').mkdir(exist_ok=True)\"', '  artifacts:', '    paths:', '      - public', '  rules:', '    - if: ''$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH''') -Encoding UTF8"
         ],
@@ -631,12 +631,13 @@ const labWorkspaces = {
         why: "실습 중 생기는 캐시와 임시 파일을 commit에서 제외합니다.",
         content: `__pycache__/
 *.pyc
+.pytest_cache/
 .venv/
 dist/
 tmp/`
       },
       "src/permissions.py": {
-        why: "역할별 허용 여부를 아주 작은 Python 함수로 표현합니다. 문법보다 입력과 출력이 보이는 것이 중요합니다.",
+        why: "역할별 허용 여부를 아주 작은 Python 함수로 표현합니다. 문법보다 입력과 출력이 먼저 보여야 합니다.",
         content: `ALLOWED_SAMPLE_ACTION_ROLES = {"Owner", "Maintainer"}
 
 def can_use_sample_action(role):
@@ -987,6 +988,275 @@ def get_sample_action_state(role, feature_flags):
   }
 };
 
+const chapterContinuity = {
+  ch01: {
+    from: "시작점입니다. 아직 commit과 MR을 경험하지 않았다고 봅니다.",
+    now: "내 PC, Git 설정, GitLab 역할, seed repository를 같은 지도 위에 올립니다.",
+    next: "CH02에서 이 seed 위에 작은 변경을 만들고 status, diff, commit을 손으로 확인합니다."
+  },
+  ch02: {
+    from: "CH01에서 만든 seed repository와 protected main 운영 가정을 이어받습니다.",
+    now: "변경이 working tree, staging area, local commit, remote 중 어디에 있는지 읽습니다.",
+    next: "CH03에서는 이 commit들이 쌓인 이력을 읽고 문제가 난 지점을 찾습니다."
+  },
+  ch03: {
+    from: "CH02에서 만든 commit 단위가 복구 판단의 재료가 됩니다.",
+    now: "log, show, diff, tag, bisect, revert로 이력과 복구 방식을 구분합니다.",
+    next: "CH04에서는 이 이력이 branch로 갈라졌을 때 main과 다시 맞추는 방법을 고릅니다."
+  },
+  ch04: {
+    from: "CH03에서 익힌 log 읽기를 branch graph와 upstream 비교로 확장합니다.",
+    now: "feature branch, tracking branch, merge, rebase, non-fast-forward를 상황으로 읽습니다.",
+    next: "CH05에서는 branch 변경을 MR로 올리고 권한, 승인, merge 조건을 확인합니다."
+  },
+  ch05: {
+    from: "CH04의 feature branch가 MR 화면으로 들어옵니다.",
+    now: "Developer, Reviewer, Maintainer, Owner가 같은 MR에서 서로 다른 책임을 맡습니다.",
+    next: "CH06에서는 MR이 동시에 진행될 때 생기는 conflict를 직접 해결합니다."
+  },
+  ch06: {
+    from: "CH05의 MR 흐름 위에서 두 사람이 같은 파일을 다르게 고치는 상황을 만듭니다.",
+    now: "conflict marker를 읽고 최종 문장과 파일 의미를 다시 씁니다.",
+    next: "CH07에서는 해결된 파일 구조가 CI smoke check를 통과하는지 확인합니다."
+  },
+  ch07: {
+    from: "CH06에서 해결한 docs/process.md와 public/index.html이 pipeline 검증 대상입니다.",
+    now: "로컬 테스트와 GitLab pipeline 로그를 나란히 놓고 실패 원인을 나눕니다.",
+    next: "CH08에서는 issue, MR, pipeline, approval, rollback을 하나의 운영 흐름으로 묶습니다."
+  },
+  ch08: {
+    from: "CH01-CH07의 저장소, branch, MR, conflict, CI 기준을 모두 이어받습니다.",
+    now: "역할별로 issue부터 rollback 판단까지 한 번에 연결합니다.",
+    next: "수업 뒤에는 팀 저장소에 맞는 기본 운영 규칙으로 바꿔 적습니다."
+  }
+};
+
+const troubleCases = {
+  ch01: {
+    0: [
+      {
+        title: "git 명령을 찾지 못합니다",
+        log: "'git' is not recognized as an internal or external command",
+        read: "Git이 설치되지 않았거나 PowerShell PATH에 잡히지 않은 상태입니다.",
+        fix: "Git for Windows 설치 뒤 PowerShell을 새로 열고 git --version부터 다시 확인합니다.",
+        command: "git --version"
+      }
+    ],
+    1: [
+      {
+        title: "저장소 밖에서 명령을 쳤습니다",
+        log: "fatal: not a git repository (or any of the parent directories): .git",
+        read: "현재 폴더가 clone된 저장소 안이 아닙니다.",
+        fix: "cd로 실습 폴더에 들어간 뒤 branch와 remote를 다시 봅니다.",
+        command: "cd tutorial-collaboration-lab"
+      }
+    ],
+    2: [
+      {
+        title: "push가 인증에서 막힙니다",
+        log: "remote: HTTP Basic: Access denied\nfatal: Authentication failed",
+        read: "GitLab 비밀번호가 아니라 token, credential manager, SSH key 문제일 가능성이 큽니다.",
+        fix: "clone 방식이 HTTPS인지 SSH인지 확인하고, GitLab에서 토큰 또는 SSH key를 다시 맞춥니다.",
+        command: "git remote -v"
+      }
+    ]
+  },
+  ch02: {
+    0: [
+      {
+        title: "main이 최신이 아닙니다",
+        log: "fatal: Not possible to fast-forward, aborting.",
+        read: "원격 main에 내 로컬에 없는 commit이 있습니다.",
+        fix: "fetch로 차이를 읽은 뒤 충돌이 없는지 보고 main을 갱신합니다.",
+        command: "git fetch origin"
+      }
+    ],
+    1: [
+      {
+        title: "add와 저장을 헷갈렸습니다",
+        log: "Changes to be committed:\n  new file: docs/tutorial-guide.md",
+        read: "파일 내용이 저장됐다는 뜻이 아니라 다음 commit 후보에 올라갔다는 뜻입니다.",
+        fix: "commit에 넣지 않을 파일은 staged 상태에서 내려놓습니다.",
+        command: "git restore --staged docs/tutorial-guide.md"
+      }
+    ],
+    3: [
+      {
+        title: "pull이 로컬 변경 때문에 멈춥니다",
+        log: "error: Your local changes to the following files would be overwritten by merge",
+        read: "아직 commit하지 않은 변경과 원격 변경이 같은 파일을 건드립니다.",
+        fix: "status와 diff를 보고 commit, stash, discard 중 하나를 고릅니다.",
+        command: "git status"
+      }
+    ]
+  },
+  ch03: {
+    0: [
+      {
+        title: "tag가 어디에 붙었는지 헷갈립니다",
+        log: "v0.1.0 -> 3f2a91b",
+        read: "tag는 branch처럼 움직이지 않습니다. 특정 commit에 붙은 이름표입니다.",
+        fix: "show로 tag가 가리키는 commit과 파일 변경을 확인합니다.",
+        command: "git show v0.1.0 --stat"
+      }
+    ],
+    2: [
+      {
+        title: "commit id가 틀렸습니다",
+        log: "fatal: bad object <commit-sha>",
+        read: "예시 placeholder를 그대로 입력했거나 현재 저장소에 없는 commit입니다.",
+        fix: "log에서 실제 SHA 앞 7자리 이상을 복사해 다시 실행합니다.",
+        command: "git log --oneline --decorate -8"
+      }
+    ],
+    3: [
+      {
+        title: "revert 중 충돌이 났습니다",
+        log: "error: could not revert <sha>\nhint: after resolving the conflicts, mark them with git add",
+        read: "되돌리려는 줄이 그 뒤 commit에서 또 바뀌었습니다.",
+        fix: "conflict 파일을 고치고 테스트한 뒤 revert commit을 마무리합니다.",
+        command: "git status"
+      }
+    ]
+  },
+  ch04: {
+    0: [
+      {
+        title: "upstream이 없습니다",
+        log: "fatal: The current branch has no upstream branch.",
+        read: "로컬 branch와 원격 branch의 추적 관계가 아직 없습니다.",
+        fix: "처음 push할 때 -u를 붙여 연결합니다.",
+        command: "git push -u origin feature/branch-playbook"
+      }
+    ],
+    2: [
+      {
+        title: "rebase가 멈췄습니다",
+        log: "CONFLICT (content): Merge conflict in docs/process.md",
+        read: "내 commit을 새 main 위로 옮기는 중 같은 줄 충돌이 났습니다.",
+        fix: "수정할 수 있으면 해결 후 rebase --continue, 어렵다면 rebase --abort로 돌아갑니다.",
+        command: "git rebase --abort"
+      }
+    ],
+    3: [
+      {
+        title: "push가 거절됩니다",
+        log: "! [rejected] feature/example -> feature/example (non-fast-forward)",
+        read: "원격 branch가 내 로컬보다 앞서 있습니다.",
+        fix: "fetch 뒤 HEAD와 upstream 차이를 먼저 확인합니다.",
+        command: "git log --oneline --left-right --graph HEAD...@{u}"
+      }
+    ]
+  },
+  ch05: {
+    1: [
+      {
+        title: "CODEOWNERS가 권한 부여로 보입니다",
+        log: "Approval is required from Code Owners",
+        read: "CODEOWNERS는 파일 소유자를 부르는 규칙이지 권한을 새로 주는 장치가 아닙니다.",
+        fix: "MR Changes에서 어떤 경로가 어떤 reviewer를 부르는지 확인합니다.",
+        command: "git diff origin/main...HEAD --stat"
+      }
+    ],
+    2: [
+      {
+        title: "merge 버튼이 비활성화됩니다",
+        log: "Merge blocked: pipeline must succeed, approvals missing, or discussions unresolved",
+        read: "권한 하나의 문제가 아니라 여러 조건이 동시에 걸린 상태일 수 있습니다.",
+        fix: "approval, discussion, pipeline, protected branch를 따로 체크합니다.",
+        command: "git status"
+      }
+    ],
+    3: [
+      {
+        title: "direct push가 막힙니다",
+        log: "remote: GitLab: You are not allowed to push code to protected branches on this project.",
+        read: "main이 protected branch라 Developer의 직접 push가 막힌 상태입니다.",
+        fix: "권한을 열기보다 feature branch와 MR 흐름으로 돌아갑니다.",
+        command: "git switch -c feature/fix-from-protected-branch"
+      }
+    ]
+  },
+  ch06: {
+    2: [
+      {
+        title: "conflict marker가 남았습니다",
+        log: "<<<<<<< HEAD\n=======\n>>>>>>> origin/main",
+        read: "Git이 고르지 못한 영역이 파일 안에 그대로 남아 있습니다.",
+        fix: "최종 문장만 남기고 marker를 지운 뒤 grep으로 확인합니다.",
+        command: "git grep -n \"<<<<<<<\\|=======\\|>>>>>>>\""
+      }
+    ],
+    3: [
+      {
+        title: "테스트는 통과했지만 의미가 틀립니다",
+        log: "Ran 2 tests in 0.001s\n\nOK",
+        read: "문법과 테스트가 맞아도 Reviewer handoff와 Maintainer approval의 의미가 빠질 수 있습니다.",
+        fix: "Changes 화면에서 최종 문장을 읽고 discussion에 의도 보존 여부를 남깁니다.",
+        command: "git diff origin/main...HEAD -- docs/process.md"
+      }
+    ]
+  },
+  ch07: {
+    0: [
+      {
+        title: "Python import가 실패합니다",
+        log: "ModuleNotFoundError: No module named 'src'",
+        read: "저장소 루트가 아닌 폴더에서 테스트를 실행했거나 src 패키지 파일이 빠졌습니다.",
+        fix: "루트에서 실행하고 src/__init__.py와 파일 위치를 확인합니다.",
+        command: "git status --short"
+      }
+    ],
+    1: [
+      {
+        title: "YAML이 파싱되지 않습니다",
+        log: "jobs config should contain at least one visible job",
+        read: ".gitlab-ci.yml 들여쓰기나 job 이름이 깨졌을 가능성이 큽니다.",
+        fix: "PowerShell 명령으로 작성된 파일 미리보기와 GitLab CI Lint를 함께 봅니다.",
+        command: "git diff -- .gitlab-ci.yml"
+      }
+    ],
+    3: [
+      {
+        title: "runner가 잡히지 않습니다",
+        log: "This job is stuck because the project doesn't have any runners online assigned to it",
+        read: "코드 문제가 아니라 runner 할당, tag, executor, protected branch 조건 문제입니다.",
+        fix: "Settings > CI/CD에서 runner 상태와 tag, protected 여부를 확인합니다.",
+        command: "git status"
+      }
+    ]
+  },
+  ch08: {
+    0: [
+      {
+        title: "issue와 branch 연결이 흐립니다",
+        log: "feature/sample-action",
+        read: "branch 이름만 보면 어떤 issue에서 출발했는지 알기 어렵습니다.",
+        fix: "issue 번호가 보이는 branch 이름으로 다시 시작하거나 MR 설명에 issue link를 남깁니다.",
+        command: "git switch -c feature/issue-101-sample-action"
+      }
+    ],
+    1: [
+      {
+        title: "테스트가 요구사항과 어긋납니다",
+        log: "AssertionError: True is not false",
+        read: "권한 없는 역할에 기능이 보인다는 뜻입니다.",
+        fix: "기능 함수와 테스트를 같은 diff에서 읽고 role 조건을 다시 확인합니다.",
+        command: "python -m unittest discover -s tests"
+      }
+    ],
+    3: [
+      {
+        title: "revert와 hotfix 중 망설입니다",
+        log: "pipeline passed, but Reporter can see sample action",
+        read: "pipeline 성공이 운영 정책의 성공을 항상 뜻하지 않습니다.",
+        fix: "권한 노출이면 revert를 우선 검토하고, 문구나 위치 문제면 hotfix로 좁힙니다.",
+        command: "git log --oneline --decorate -8"
+      }
+    ]
+  }
+};
+
 async function loadChapters() {
   const response = await fetch("../../data/chapters.json");
   if (!response.ok) throw new Error("chapters.json load failed");
@@ -1031,10 +1301,29 @@ function renderPolicyNote(policy) {
   `;
 }
 
+function renderLearningBridge(bridge) {
+  if (!bridge) return "";
+  const items = [
+    ["이어받는 것", bridge.from],
+    ["이번 장에서 익히는 것", bridge.now],
+    ["다음 장으로 넘기는 것", bridge.next]
+  ];
+  return `
+    <div class="learning-bridge" aria-label="챕터 연결">
+      ${renderList(items, ([label, text]) => `
+        <div>
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(text)}</strong>
+        </div>
+      `)}
+    </div>
+  `;
+}
+
 function commandGuide(command) {
   const text = command.trim();
   const guides = [
-    [/^git --version$/, "git version 2.45.0", "Git이 설치되어 있고 터미널에서 실행되는지 확인합니다. 버전 숫자보다 명령이 정상 실행되는지가 중요합니다."],
+    [/^git --version$/, "git version 2.45.0", "Git이 설치되어 있고 터미널에서 실행되는지 확인합니다. 버전 숫자보다 명령이 정상 실행되는지를 봅니다."],
     [/^git config --global user.name$/, "Hong Gil Dong", "commit 작성자 이름을 확인합니다. GitLab 계정과 다르면 MR에서 작성자 추적이 어긋날 수 있습니다."],
     [/^git config --global user.email$/, "hong@example.com", "commit 작성자 이메일을 확인합니다. GitLab 계정 이메일 또는 verified email과 맞춰 둡니다."],
     [/^git config --list --show-origin$/, "file:C:/Users/user/.gitconfig user.name=Hong Gil Dong\nfile:C:/Users/user/.gitconfig user.email=hong@example.com", "설정값이 어느 파일에서 왔는지 봅니다. global, system, local 설정이 섞였을 때 원인을 찾기 좋습니다."],
@@ -1051,8 +1340,8 @@ function commandGuide(command) {
     [/^git commit -m /, "[feature/tutorial 3f2a91b] commit created\n 2 files changed, 12 insertions(+)", "staged 변경을 하나의 로컬 이력으로 묶습니다. 메시지는 MR에서 리뷰어가 처음 읽는 맥락입니다."],
     [/^git push -u /, "remote: Create merge request for feature/tutorial\nbranch 'feature/tutorial' set up to track 'origin/feature/tutorial'.", "-u는 이 로컬 branch와 원격 branch의 추적 관계를 만듭니다. 이후 push/pull 대상이 명확해집니다."],
     [/^git push$/, "Everything up-to-date", "현재 branch의 commit을 upstream에 보냅니다. 실패하면 권한, protected branch, non-fast-forward를 나눠 봅니다."],
-    [/^git fetch /, "From gitlab.example.com:group/tutorial\n   a12b3c4..d56e7f8  main -> origin/main", "원격 변경을 가져오지만 현재 working tree에는 반영하지 않습니다. 비교를 먼저 할 수 있습니다."],
-    [/^git pull --ff-only$/, "Updating a12b3c4..d56e7f8\nFast-forward", "원격 변경을 현재 branch에 반영하되, 자동 merge commit이 필요한 상황이면 멈춥니다."],
+    [/^git fetch /, "From gitlab.example.com:group/tutorial\n   a12b3c4..d56e7f8  main -> origin/main", "원격 변경을 가져오지만 현재 working tree에는 넣지 않습니다. 비교를 먼저 할 수 있습니다."],
+    [/^git pull --ff-only$/, "Updating a12b3c4..d56e7f8\nFast-forward", "원격 변경을 현재 branch에 넣되, 자동 merge commit이 생길 상황이면 멈춥니다."],
     [/^git switch -c /, "Switched to a new branch 'feature/example'", "새 branch를 만들고 그 branch로 이동합니다. main이 아니라 작업 branch에서 변경을 시작합니다."],
     [/^git switch /, "Switched to branch 'main'", "작업 대상을 다른 branch로 바꿉니다. 이동 전 working tree가 깨끗한지 확인하는 습관이 필요합니다."],
     [/^git log /, "* 3f2a91b (HEAD -> feature/tutorial) docs: add tutorial guide\n* a12b3c4 (origin/main, main) ch01: initialize tutorial collaboration seed", "commit 이력을 시간순으로 읽습니다. graph 옵션은 branch가 어떻게 갈라졌는지 보여줍니다."],
@@ -1060,7 +1349,7 @@ function commandGuide(command) {
     [/^git tag /, "tag 'v0.1.0' created at current HEAD", "현재 commit에 이름표를 붙입니다. 문제 없는 기준점을 남길 때 유용합니다."],
     [/^git bisect /, "Bisecting: 2 revisions left to test", "좋은 commit과 나쁜 commit 사이를 반씩 줄이며 원인을 찾습니다."],
     [/^git revert /, "[feature/recovery 9ac2d1e] Revert selected commit", "기존 commit을 지우지 않고 반대 변경을 새 commit으로 남깁니다. 공유 이력 복구에 적합합니다."],
-    [/^git merge /, "Auto-merging docs/process.md\nCONFLICT (content): Merge conflict in docs/process.md", "두 이력을 합칩니다. 같은 줄을 다르게 고쳤다면 사람이 conflict를 해결해야 합니다."],
+    [/^git merge /, "Auto-merging docs/process.md\nCONFLICT (content): Merge conflict in docs/process.md", "두 이력을 합칩니다. 같은 줄을 다르게 고쳤다면 사람이 최종 문장을 고릅니다."],
     [/^git rebase /, "Successfully rebased and updated refs/heads/feature/example.", "내 commit을 새 기준 위에 다시 쌓습니다. 이미 공유한 branch에서는 신중하게 씁니다."],
     [/^git grep /, "검색 결과 없음", "저장소 안에서 문자열을 찾습니다. conflict marker가 남았는지 확인할 때 유용합니다."],
     [/^python -m unittest discover -s tests$/, "Ran 2 tests in 0.001s\n\nOK", "Python 표준 테스트를 실행합니다. tests 폴더 아래의 테스트 파일을 찾아 역할 규칙을 확인합니다."],
@@ -1136,7 +1425,10 @@ function renderCommandPreview(writeInfo) {
         <span>${label}</span>
         <strong data-preview-path>${escapeHtml(writeInfo?.path || "")}</strong>
       </div>
-      <pre><code data-preview-content>${escapeHtml(writeInfo?.content || "")}</code></pre>
+      <div class="code-panel">
+        <button class="copy-button" type="button">복사</button>
+        <pre><code data-preview-content>${escapeHtml(writeInfo?.content || "")}</code></pre>
+      </div>
     </div>
   `;
 }
@@ -1177,12 +1469,51 @@ function renderCommandRunner(commands, stepIndex) {
       </div>
       <div class="command-detail" aria-live="polite">
         <p class="section-label">PowerShell 명령</p>
-        <pre class="command-input"><code>${escapeHtml(firstCommand)}</code></pre>
+        <div class="code-panel">
+          <button class="copy-button" type="button">복사</button>
+          <pre class="command-input"><code>${escapeHtml(firstCommand)}</code></pre>
+        </div>
         <p class="section-label">예상 출력</p>
         <pre class="command-output"><code>${escapeHtml(firstGuide.output)}</code></pre>
         <p class="section-label">이 명령의 의미</p>
         <p class="command-meaning">${escapeHtml(firstGuide.meaning)}</p>
         ${renderCommandPreview(firstWriteInfo)}
+      </div>
+    </div>
+  `;
+}
+
+function renderTroubleCard(cases) {
+  if (!cases || cases.length === 0) return "";
+  return `
+    <div class="trouble-card">
+      <strong>막혔을 때 먼저 볼 로그</strong>
+      <div class="trouble-list">
+        ${renderList(cases, (item, index) => `
+          <details class="trouble-case" ${index === 0 ? "open" : ""}>
+            <summary>${escapeHtml(item.title)}</summary>
+            <div class="trouble-body">
+              <div>
+                <span>화면에 보이는 로그</span>
+                <div class="code-panel">
+                  <button class="copy-button" type="button">복사</button>
+                  <pre><code>${escapeHtml(item.log)}</code></pre>
+                </div>
+              </div>
+              <p><strong>읽는 법</strong>${escapeHtml(item.read)}</p>
+              <p><strong>첫 조치</strong>${escapeHtml(item.fix)}</p>
+              ${item.command ? `
+                <div>
+                  <span>다시 확인할 명령</span>
+                  <div class="code-panel">
+                    <button class="copy-button" type="button">복사</button>
+                    <pre><code>${escapeHtml(item.command)}</code></pre>
+                  </div>
+                </div>
+              ` : ""}
+            </div>
+          </details>
+        `)}
       </div>
     </div>
   `;
@@ -1280,14 +1611,17 @@ function renderWorkspaceExplorer(workspace) {
             <strong data-file-title>${escapeHtml(firstPath)}</strong>
             <span data-file-why-target>${escapeHtml(firstFile.why)}</span>
           </div>
-          <pre class="file-content"><code data-file-content-target>${escapeHtml(firstFile.content)}</code></pre>
+          <div class="code-panel file-code-panel">
+            <button class="copy-button" type="button">복사</button>
+            <pre class="file-content"><code data-file-content-target>${escapeHtml(firstFile.content)}</code></pre>
+          </div>
         </div>
       </div>
     </article>
   `;
 }
 
-function renderTutorialStep(step, index) {
+function renderTutorialStep(step, index, troubles = []) {
   return `
     <section class="tutorial-step">
       <div class="step-copy">
@@ -1299,6 +1633,7 @@ function renderTutorialStep(step, index) {
         ${renderCommandRunner(step.commands, index)}
         ${renderActionCard("GitLab 화면에서 볼 것", step.gitlab)}
         ${renderActionCard("확인 기준", step.check)}
+        ${renderTroubleCard(troubles)}
       </div>
     </section>
   `;
@@ -1349,8 +1684,16 @@ function hydrateCommandRunners(root) {
           line.classList.toggle("active", active);
           if (line.tagName === "BUTTON") line.setAttribute("aria-current", String(active));
         });
+        input.textContent = button.dataset.command;
         output.textContent = button.dataset.output;
         meaning.textContent = button.dataset.meaning;
+        if (preview && previewLabel && previewPath && previewContent) {
+          const hasPreview = Boolean(button.dataset.previewPath);
+          preview.classList.toggle("is-hidden", !hasPreview);
+          previewLabel.textContent = button.dataset.previewMode === "append" ? "추가될 파일 미리보기" : "작성될 파일 미리보기";
+          previewPath.textContent = button.dataset.previewPath || "";
+          previewContent.textContent = button.dataset.previewContent || "";
+        }
       });
     });
   });
@@ -1367,17 +1710,38 @@ function hydrateSceneCommands(root) {
           node.classList.toggle("active", active);
           node.setAttribute("aria-current", String(active));
         });
-        input.textContent = button.dataset.command;
         output.textContent = button.dataset.output;
         meaning.textContent = button.dataset.meaning;
-        if (preview && previewLabel && previewPath && previewContent) {
-          const hasPreview = Boolean(button.dataset.previewPath);
-          preview.classList.toggle("is-hidden", !hasPreview);
-          previewLabel.textContent = button.dataset.previewMode === "append" ? "추가될 파일 미리보기" : "작성될 파일 미리보기";
-          previewPath.textContent = button.dataset.previewPath || "";
-          previewContent.textContent = button.dataset.previewContent || "";
-        }
       });
+    });
+  });
+}
+
+function hydrateCopyButtons(root) {
+  root.querySelectorAll(".copy-button").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const panel = button.closest(".code-panel");
+      const code = panel?.querySelector("code");
+      const text = code?.textContent || "";
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      const original = button.textContent;
+      button.textContent = "복사됨";
+      window.setTimeout(() => {
+        button.textContent = original;
+      }, 1200);
     });
   });
 }
@@ -1427,6 +1791,7 @@ async function initChapter() {
                   <span>${escapeHtml(detail.scenario.done.join(" / "))}</span>
                 </div>
               </div>
+              ${renderLearningBridge(chapterContinuity[id])}
             </article>
 
             ${renderWorkspaceExplorer(workspace)}
@@ -1448,7 +1813,7 @@ async function initChapter() {
               <p class="section-label">Hands-on Tutorial</p>
               <h2>터미널과 GitLab 화면을 번갈아 확인합니다.</h2>
               <div class="tutorial-grid">
-                ${renderList(detail.tutorial, renderTutorialStep)}
+                ${renderList(detail.tutorial, (step, index) => renderTutorialStep(step, index, troubleCases[id]?.[index] || []))}
               </div>
             </article>
 
@@ -1466,6 +1831,7 @@ async function initChapter() {
     hydrateWorkspaceExplorer(root);
     hydrateCommandRunners(root);
     hydrateSceneCommands(root);
+    hydrateCopyButtons(root);
   } catch (error) {
     root.innerHTML = `
       <section class="page-shell chapter-page">

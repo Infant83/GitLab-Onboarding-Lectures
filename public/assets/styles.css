@@ -1134,6 +1134,37 @@ select {
   overflow-wrap: anywhere;
 }
 
+.learning-bridge {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.7rem;
+}
+
+.learning-bridge div {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.65rem;
+}
+
+.learning-bridge span {
+  display: block;
+  margin-bottom: 0.28rem;
+  color: var(--accent-warm);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.learning-bridge strong {
+  display: block;
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
 .workspace-lab {
   display: grid;
   gap: 0.85rem;
@@ -1196,11 +1227,16 @@ select {
   word-break: keep-all;
 }
 
+.file-code-panel {
+  background: #1f2d28;
+}
+
 .file-content {
   max-height: 22rem;
   margin: 0;
   overflow: auto;
   padding: 0.85rem;
+  padding-right: 3.9rem;
   color: #f6f0e5;
   background: #1f2d28;
   font-size: 0.82rem;
@@ -1244,21 +1280,25 @@ select {
 .step-actions {
   display: grid;
   gap: 0.55rem;
+  min-width: 0;
 }
 
 .command-runner {
   display: grid;
   grid-template-columns: minmax(15rem, 0.68fr) minmax(0, 1.32fr);
   gap: 0.55rem;
+  min-width: 0;
 }
 
 .command-list {
   display: grid;
   gap: 0.35rem;
   align-content: start;
+  min-width: 0;
 }
 
 .command-line {
+  min-width: 0;
   border: 1px solid rgba(49, 75, 66, 0.18);
   border-radius: var(--radius);
   background: #1f2d28;
@@ -1306,8 +1346,15 @@ select {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
+.command-line code,
+.scene-command code {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
 .command-detail {
   min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.54);
@@ -1317,6 +1364,40 @@ select {
 .command-detail .section-label {
   margin-bottom: 0.35rem;
   font-size: 0.72rem;
+}
+
+.code-panel {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.code-panel pre {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 1;
+  border: 1px solid rgba(49, 75, 66, 0.24);
+  border-radius: 999px;
+  background: rgba(246, 240, 229, 0.92);
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.2rem 0.48rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.copy-button:hover {
+  border-color: rgba(156, 125, 93, 0.82);
+  color: var(--accent);
 }
 
 .command-input,
@@ -1334,6 +1415,7 @@ select {
   max-height: 6.8rem;
   background: rgba(31, 45, 40, 0.07);
   color: #1f2d28;
+  padding-right: 3.9rem;
 }
 
 .command-output {
@@ -1391,6 +1473,7 @@ select {
   background: rgba(31, 45, 40, 0.07);
   color: #1f2d28;
   padding: 0.62rem;
+  padding-right: 3.9rem;
   font-size: 0.78rem;
   line-height: 1.48;
 }
@@ -1400,6 +1483,7 @@ select {
 }
 
 .action-card {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.54);
@@ -1420,6 +1504,92 @@ select {
   color: var(--muted);
   font-size: 0.88rem;
   word-break: keep-all;
+}
+
+.trouble-card {
+  min-width: 0;
+  border: 1px solid rgba(156, 125, 93, 0.24);
+  border-radius: var(--radius);
+  background: rgba(156, 125, 93, 0.07);
+  padding: 0.72rem;
+}
+
+.trouble-card > strong {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.86rem;
+}
+
+.trouble-list {
+  display: grid;
+  gap: 0.38rem;
+  min-width: 0;
+}
+
+.trouble-case {
+  min-width: 0;
+  border: 1px solid rgba(49, 75, 66, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.trouble-case summary {
+  cursor: pointer;
+  padding: 0.52rem 0.62rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.trouble-body {
+  display: grid;
+  gap: 0.48rem;
+  min-width: 0;
+  border-top: 1px solid var(--line);
+  padding: 0.6rem;
+}
+
+.trouble-body > div {
+  min-width: 0;
+}
+
+.trouble-body span {
+  display: block;
+  margin-bottom: 0.28rem;
+  color: var(--accent-warm);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.trouble-body pre {
+  max-height: 7.2rem;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid rgba(49, 75, 66, 0.14);
+  border-radius: var(--radius);
+  background: #24352f;
+  color: #f6f0e5;
+  padding: 0.58rem;
+  padding-right: 3.9rem;
+  font-size: 0.77rem;
+  line-height: 1.45;
+}
+
+.trouble-body code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.trouble-body p {
+  display: grid;
+  gap: 0.18rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  word-break: keep-all;
+}
+
+.trouble-body p strong {
+  color: var(--text);
+  font-size: 0.78rem;
 }
 
 .command-block {
@@ -1553,6 +1723,7 @@ select {
 
   .tutorial-step,
   .chapter-brief,
+  .learning-bridge,
   .scene-visual-grid,
   .workspace-grid,
   .command-runner,
@@ -1582,6 +1753,7 @@ select {
   .workflow-board,
   .audit-grid,
   .handoff-grid,
+  .learning-bridge,
   .control-row,
   .scenario-head {
     grid-template-columns: 1fr;

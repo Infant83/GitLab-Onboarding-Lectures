@@ -28,6 +28,14 @@
 - 여러 줄 파일 본문은 명령 목록에 쪼개서 노출하지 않고, 선택한 명령의 오른쪽 미리보기에서만 확인하도록 바꿨다.
 - CH07의 Pages job은 GitLab runner 안에서도 shell 의존이 줄어들도록 Python 한 줄 명령으로 `public` 폴더를 만든다.
 
+## Loop 5. 초보 수강생 실행 흐름
+
+- CH01 seed에서 CH08 capstone까지 Python/Markdown/HTML 기반 로컬 실습을 한 번 연결해 실행했다.
+- 각 챕터에 "이어받는 것 / 이번 장에서 익히는 것 / 다음 장으로 넘기는 것"을 넣어 수강생이 흐름을 놓치지 않게 했다.
+- 단계별로 실제로 만날 수 있는 오류 로그, 읽는 법, 첫 조치, 다시 확인할 명령을 추가했다.
+- 명령, 파일 본문, 오류 로그에는 복사 버튼을 붙였다. 복사 버튼은 화면을 복잡하게 만들지 않도록 코드 블록 안에 작게 배치했다.
+- Python 테스트 뒤 생기는 `__pycache__`, `*.pyc`, `.pytest_cache`가 실습 commit에 섞이지 않도록 seed `.gitignore`를 보강했다.
+
 ## 남은 운영 메모
 
 - Required approval은 GitLab tier와 project 설정에 따라 달라진다. 수업에서는 approval rule이 켜진 팀 운영을 기준으로 설명한다.

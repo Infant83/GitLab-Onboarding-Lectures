@@ -12,12 +12,13 @@
 - 각 챕터는 `목표`, `실습`, `완료 기준`을 가진다.
 - 권한 설명은 표보다 상황을 먼저 둔다.
 
-공식 기준 확인일: 2026-05-23
+공식 기준 확인일: 2026-05-24
 
 - <https://docs.gitlab.com/user/permissions/>
 - <https://docs.gitlab.com/user/project/merge_requests/authorization_for_merge_requests/>
 - <https://docs.gitlab.com/user/project/merge_requests/approvals/>
 - <https://docs.gitlab.com/user/project/repository/branches/protected/>
+- <https://docs.gitlab.com/ci/yaml/>
 
 ## 2. Scenario Audit
 
